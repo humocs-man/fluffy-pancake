@@ -44,10 +44,13 @@ echo "::endgroup::"
 echo "::group:: Install Packages"
 
 # Install packages using dnf5
-# Example: dnf5 install -y tmux
+dnf5 install -y \
+fastfetch \
+btop \
+
 
 # Example using COPR with isolated pattern:
-# copr_install_isolated "ublue-os/staging" package-name
+copr_install_isolated "ryanabx/cosmic-epoch" cosmic-desktop
 
 echo "::endgroup::"
 
