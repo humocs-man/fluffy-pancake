@@ -10,6 +10,7 @@ set -eoux pipefail
 # shellcheck source=/dev/null
 source /ctx/build/copr-helpers.sh
 
+
 # Enable nullglob for all glob operations to prevent failures on empty matches
 shopt -s nullglob
 
@@ -39,17 +40,17 @@ echo "::group:: Install Packages"
 dnf5 install -y \
   fastfetch \
   btop \
-  libvirt \ 
-  libvirt-daemon \ 
-  libvirt-daemon-driver-qemu \ 
-  libvirt-daemon-config-network \ 
-  libvirt-daemon-kvm \ 
-  libvirt-client \ 
-  qemu-kvm \ 
-  qemu-img \ 
-  virt-manager \ 
-  virt-viewer \ 
-  usbredir \ 
+  libvirt \
+  libvirt-daemon \
+  libvirt-daemon-driver-qemu \
+  libvirt-daemon-config-network \
+  libvirt-daemon-kvm \
+  libvirt-client \
+  qemu-kvm \
+  qemu-img \
+  virt-manager \
+  virt-viewer \
+  usbredir \
   usbredir-server 
   
 
