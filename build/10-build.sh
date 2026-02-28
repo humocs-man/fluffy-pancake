@@ -38,46 +38,34 @@ echo "::group:: Install Packages"
 # Base utilities
 dnf5 install -y \
   fastfetch \
-  btop
-
-# Hyprland über COPR (isoliert)
-copr_install_isolated "ashbuk/Hyprland-Fedora" \
-  hyprland \
-  xdg-desktop-portal-hyprland
-
-# Quickshell aus COPR (isoliert)
-copr_install_isolated "errornointernet/quickshell" \
-  quickshell
-
-# Hyprland-Bausteine (isoliert)
-copr_install_isolated "nett00n/hyprland" \
-  hyprpaper \
-  hypridle \
-  hyprlock \
-  hyprpolkitagent
+  btop \
+  libvirt \ 
+  libvirt-daemon \ 
+  libvirt-daemon-driver-qemu \ 
+  libvirt-daemon-config-network \ 
+  libvirt-daemon-kvm \ 
+  libvirt-client \ 
+  qemu-kvm \ 
+  qemu-img \ 
+  virt-manager \ 
+  virt-viewer \ 
+  usbredir \ 
+  usbredir-server 
   
-# Desktop-Basis aus Fedora
-dnf5 install -y \
-  foot \
-  fuzzel \
-  wlogout \
-  xdg-desktop-portal-gtk \
-  network-manager-applet
 
-# Laptop-spezifische Komponenten
-dnf5 install -y \
-  power-profiles-daemon \
-  upower \
-  bluez \
-  bluez-tools \
-  blueman
-
+copr_install_isolated "ryanabx/cosmic-epoch" \
+  cosmic-desktop
+  
 echo "::endgroup::"
 
 echo "::group:: System Configuration"
 
 systemctl enable podman.socket
 systemctl enable bluetooth.service
+systemctl enable cosmic-greeter.service
+systemctl enable libvirtd.service
+systemctl enable virtlogd.service
+
 
 echo "::endgroup::"
 
