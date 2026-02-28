@@ -45,12 +45,19 @@ copr_install_isolated "ashbuk/Hyprland-Fedora" \
   hyprland \
   xdg-desktop-portal-hyprland
 
-# Quickshell + Desktop-Basis aus Fedora
-dnf5 install -y \
-  quickshell \
+# Quickshell aus COPR (isoliert)
+copr_install_isolated " errornointernet/quickshell " \
+  quickshell
+
+# Hyprland-Bausteine (isoliert)
+copr_install_isolated "nett00n/hyprland" \
   hyprpaper \
   hypridle \
   hyprlock \
+  hyprpolkitagent
+  
+# Desktop-Basis aus Fedora
+dnf5 install -y \
   foot \
   fuzzel \
   wlogout \
