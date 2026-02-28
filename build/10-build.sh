@@ -46,7 +46,7 @@ copr_install_isolated "ashbuk/Hyprland-Fedora" \
   xdg-desktop-portal-hyprland
 
 # Quickshell aus COPR (isoliert)
-copr_install_isolated " errornointernet/quickshell " \
+copr_install_isolated "errornointernet/quickshell" \
   quickshell
 
 # Hyprland-Bausteine (isoliert)
