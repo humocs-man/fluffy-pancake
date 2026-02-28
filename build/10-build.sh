@@ -21,19 +21,6 @@ cp -r /ctx/oci/common/bluefin/usr/share/ublue-os/just/* /usr/share/ublue-os/just
 
 echo "::endgroup::"
 
-echo "::group:: Copy Custom Files"
-
-mkdir -p /usr/share/ublue-os/homebrew/
-cp /ctx/custom/brew/*.Brewfile /usr/share/ublue-os/homebrew/
-
-find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; \
-  >> /usr/share/ublue-os/just/60-custom.just
-
-mkdir -p /etc/flatpak/preinstall.d/
-cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
-
-echo "::endgroup::"
-
 echo "::group:: Install Packages"
 
 # Base utilities
@@ -50,19 +37,43 @@ dnf5 install -y \
   qemu-img \
   virt-manager \
   virt-viewer \
-  usbredir
+  usbredir \
+  ublue-brew \
+  ublue-recipes \
+  ublue-update
 
+echo "::endgroup::"
+
+echo "::group:: Copy Custom Files"
+
+mkdir -p /usr/share/ublue-os/homebrew/
+cp /ctx/custom/brew/*.Brewfile /usr/share/ublue-os/homebrew/
+
+find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; \
+  >> /usr/share/ublue-os/just/60-custom.just
+
+mkdir -p /etc/flatpak/preinstall.d/
+cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
+
+# systemd presets, services, overrides 
+mkdir -p /etc/systemd/ 
+cp -r /ctx/oci/common/bluefin/etc/systemd/* /etc/systemd/
+
+echo "::endgroup::"
+
+
+echo "::group:: Installing COSMIC"
 
 copr_install_isolated "ryanabx/cosmic-epoch" \
   cosmic-desktop
-  
+
 echo "::endgroup::"
+  
 
 echo "::group:: System Configuration"
 
 systemctl enable podman.socket
 systemctl enable bluetooth.service
-systemctl enable cosmic-greeter.service
 systemctl enable libvirtd.service
 systemctl enable virtlogd.service
 
