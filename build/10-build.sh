@@ -62,9 +62,6 @@ find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; \
 mkdir -p /etc/flatpak/preinstall.d/
 cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
 
-# systemd presets, services, overrides 
-mkdir -p /etc/systemd/
-cp -r /ctx/oci/common/bluefin/etc/systemd/* /etc/systemd/
 
 echo "::endgroup::"
 
