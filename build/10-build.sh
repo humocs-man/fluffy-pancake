@@ -50,8 +50,7 @@ dnf5 install -y \
   qemu-img \
   virt-manager \
   virt-viewer \
-  usbredir \
-  usbredir-server 
+  usbredir \ 
   
 
 copr_install_isolated "ryanabx/cosmic-epoch" \
