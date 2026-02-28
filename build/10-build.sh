@@ -64,7 +64,7 @@ cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
 
 # systemd presets, services, overrides 
 mkdir -p /etc/systemd/
-cp -r /ctx/oci/common/bluefin/etc/systemd/* /etc/systemd
+cp -r /ctx/oci/common/bluefin/etc/systemd/* /etc/systemd/
 
 echo "::endgroup::"
 
