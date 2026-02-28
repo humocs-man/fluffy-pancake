@@ -50,8 +50,8 @@ dnf5 install -y \
   qemu-img \
   virt-manager \
   virt-viewer \
-  usbredir \ 
-  
+  usbredir
+
 
 copr_install_isolated "ryanabx/cosmic-epoch" \
   cosmic-desktop
