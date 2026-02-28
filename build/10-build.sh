@@ -37,12 +37,19 @@ dnf5 install -y \
   qemu-img \
   virt-manager \
   virt-viewer \
-  usbredir \
-  ublue-brew \
-  ublue-recipes \
-  ublue-update
+  usbredir
+  
+echo "::endgroup::"
+
+echo "::group:: Remove Firefox Systempackage"
+
+dnf5 remove -y \
+  firefox \
+  firefox-langpacks\*
 
 echo "::endgroup::"
+
+
 
 echo "::group:: Copy Custom Files"
 
