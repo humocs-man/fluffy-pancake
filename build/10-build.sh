@@ -14,18 +14,21 @@ source /ctx/build/copr-helpers.sh
 shopt -s nullglob
 
 echo "::group:: Apply Bluefin common system files"
-# Bringt Flatpak-Preinstall, Flathub-Remote, systemd-Units, Defaults, etc.
-cp -a /ctx/oci/common/bluefin/system_files/. /
+cp -a /ctx/oci/common/system_files/. /
+echo "::endgroup::"
+
+echo "::group:: Remove Bluefin GNOME branding"
+rm -rf /usr/share/backgrounds/bluefin
+rm -rf /usr/share/gnome-shell
+rm -rf /usr/share/themes/Bluefin*
+rm -rf /usr/share/icons/Bluefin*
+rm -rf /usr/share/ublue-os/gnome
+rm -f /usr/share/glib-2.0/schemas/*bluefin*.gschema.override
 echo "::endgroup::"
 
 echo "::group:: Apply Brew integration"
 # Bringt Brew-User, PATH, systemd-Units, Brew-Bundle-Mechanik
 cp -a /ctx/oci/brew/system_files/. /
-echo "::endgroup::"
-
-echo "::group:: Copy Bluefin Config from Common"
-mkdir -p /usr/share/ublue-os/just/
-cp -r /ctx/oci/common/bluefin/usr/share/ublue-os/just/* /usr/share/ublue-os/just/
 echo "::endgroup::"
 
 echo "::group:: Install Packages"
