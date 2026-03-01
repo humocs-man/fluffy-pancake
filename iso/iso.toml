@@ -24,3 +24,15 @@ enable = [
 disable = [
   "org.fedoraproject.Anaconda.Modules.Subscription"
 ]
+
+[[customizations.files]]
+path = "/files/usr/lib/systemd/system/fluffy-pancake-firstboot.service"
+destination = "/usr/lib/systemd/system/fluffy-pancake-firstboot.service"
+
+[[customizations.files]]
+path = "/files/usr/libexec/fluffy-pancake/firstboot.sh"
+destination = "/usr/libexec/fluffy-pancake/firstboot.sh"
+
+[[customizations.files]]
+path = "/files/usr/lib/systemd/system-preset/90-fluffy-pancake-firstboot.preset"
+destination = "/usr/lib/systemd/system-preset/90-fluffy-pancake-firstboot.preset"

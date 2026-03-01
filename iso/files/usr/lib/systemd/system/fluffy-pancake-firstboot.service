@@ -1,0 +1,13 @@
+[Unit]
+Description=Fluffy Pancake First Boot Initialization
+ConditionFirstBoot=yes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/fluffy-pancake/firstboot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=first-boot-complete.target
