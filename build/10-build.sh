@@ -28,7 +28,7 @@ echo "::endgroup::"
 
 echo "::group:: Apply Brew integration"
 # Bringt Brew-User, PATH, systemd-Units, Brew-Bundle-Mechanik
-cp -a /ctx/oci/brew/system_files/. /
+cp -a /ctx/oci/brew/. /
 echo "::endgroup::"
 
 echo "::group:: Install Packages"
@@ -52,7 +52,9 @@ echo "::endgroup::"
 echo "::group:: Remove Firefox Systempackage"
 dnf5 remove -y \
   firefox \
-  firefox-langpacks\*
+  firefox-langpacks\* \
+  htop \
+  nvtop
 echo "::endgroup::"
 
 echo "::group:: Copy Custom Files"
