@@ -1,12 +1,5 @@
 # ISO configuration for a bootc-based installer ISO
 
-# --- GRUB / Bootloader configuration ---
-[grub2]
-product = "Fluffy Pancake"
-vendor = "Humocs"
-efi = true
-timeout = 5
-
 # --- Kickstart: post-install bootc switch ---
 [customizations.installer.kickstart]
 contents = """
