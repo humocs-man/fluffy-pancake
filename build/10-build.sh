@@ -14,7 +14,7 @@ source /ctx/build/copr-helpers.sh
 shopt -s nullglob
 
 echo "::group:: Apply Bluefin common system files"
-cp -a /ctx/oci/common/system_files/. /
+cp -a /ctx/oci/common/. /
 echo "::endgroup::"
 
 echo "::group:: Remove Bluefin GNOME branding"
