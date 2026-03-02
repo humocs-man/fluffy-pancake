@@ -68,7 +68,7 @@ find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; \
 
 # Flatpak-Preinstall-Skripte → werden durch flatpak-preinstall.service ausgeführt
 mkdir -p /etc/flatpak/preinstall.d/
-cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
+cp /ctx/custom/flatpaks/*.preinstall /usr/share/flatpak/preinstall.d/
 echo "::endgroup::"
 
 echo "::group:: Installing COSMIC"
