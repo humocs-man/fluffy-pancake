@@ -1,1 +1,8 @@
+# First boot logic
 enable fluffy-pancake-firstboot.service
+
+# Virtualization (virt-manager / libvirt)
+enable libvirtd.service
+enable virtlogd.service
+enable libvirtd.socket
+enable virtlogd.socket
