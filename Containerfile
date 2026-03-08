@@ -23,8 +23,6 @@
 #
 # 1. Context Stage (ctx) - Combines resources from:
 #    - Local build scripts and custom files
-#    - @projectbluefin/common - Desktop configuration shared with Aurora 
-#    - @ublue-os/brew - Homebrew integration
 #
 # 2. Base Image Options:
 #    - `ghcr.io/ublue-os/silverblue-main:latest` (Fedora and GNOME)
@@ -39,13 +37,6 @@ FROM scratch AS ctx
 
 COPY build /build
 COPY custom /custom
-# Copy from OCI containers to distinct subdirectories to avoid conflicts
-# Note: Renovate can automatically update these :latest tags to SHA-256 digests for reproducibility
-COPY --from=ghcr.io/projectbluefin/common:latest /system_files /oci/common
-COPY --from=ghcr.io/ublue-os/brew:latest /system_files /oci/brew
-
-# Base Image - GNOME included
-#FROM ghcr.io/ublue-os/silverblue-main:latest
 
 ## Alternative base images, no desktop included (uncomment to use):
 FROM ghcr.io/ublue-os/base-main:latest    
@@ -65,16 +56,6 @@ FROM ghcr.io/ublue-os/base-main:latest
 
 # RUN rm /opt && mkdir /opt
 
-### MODIFICATIONS
-## Make modifications desired in your image and install packages by modifying the build scripts.
-## The following RUN directive mounts the ctx stage which includes:
-##   - Local build scripts from /build
-##   - Local custom files from /custom
-##   - Files from @projectbluefin/common at /oci/common
-##   - Files from @projectbluefin/branding at /oci/branding
-##   - Files from @ublue-os/artwork at /oci/artwork
-##   - Files from @ublue-os/brew at /oci/brew
-## Scripts are run in numerical order (10-build.sh, 20-example.sh, etc.)
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
@@ -83,8 +64,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/10-build.sh
 
 COPY files/ /
-RUN systemctl preset-all
-    
+
 ### LINTING
 ## Verify final image and contents are correct.
 RUN bootc container lint
