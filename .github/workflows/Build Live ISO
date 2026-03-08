@@ -1,0 +1,38 @@
+name: Build Live ISO (Titanoboa + Anaconda)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  iso:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Live ISO
+        id: iso
+        uses: ublue-os/titanoboa@main
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:stable
+          builder-distro: fedora
+          hook-post-rootfs: ${{ github.workspace }}/iso/enable_anaconda.sh
+
+      - name: Rename + checksum
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          mv "${{ steps.iso.outputs.iso-dest }}" \
+             output/${{ github.event.repository.name }}-live.iso
+          (cd output && sha256sum *.iso > SHA256SUMS)
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-iso
+          path: output/*
