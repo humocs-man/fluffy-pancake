@@ -11,7 +11,11 @@ rm -rf /home
 # --------------------------------------------------------------------
 dnf install -y \
   anaconda \
-  anaconda-webui
+  anaconda-gui \
+  anaconda-live \
+  anaconda-widgets \
+  xorg-x11-server-Xwayland \
+  polkit
 
 # --------------------------------------------------------------------
 # Phase 3: Installer-Launcher systemweit anlegen
