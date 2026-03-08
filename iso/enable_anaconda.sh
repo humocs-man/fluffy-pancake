@@ -24,7 +24,7 @@ cat > /usr/share/applications/install-to-disk.desktop <<'EOF'
 [Desktop Entry]
 Name=Install to Disk
 Comment=Install this system to your computer
-Exec=systemctl start anaconda-webui.service
+Exec=Exec=pkexec anaconda
 Icon=system-software-install
 Terminal=false
 Type=Application
