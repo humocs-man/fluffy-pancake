@@ -2,31 +2,32 @@
 set -euo pipefail
 
 # ------------------------------------------------------------
-# Minimal notwendige Installer-Komponenten
+# Installer-Komponenten für Live-ISO
 # ------------------------------------------------------------
 dnf -y install \
   anaconda \
-  pykickstart \
-  lorax-templates-generic \
-  || true
+  anaconda-webui \
+  cockpit \
+  cockpit-anaconda
 
 # ------------------------------------------------------------
-# Installer-Launcher (nur Live-System)
+# Desktop-Launcher für Live-User (COSMIC-kompatibel)
 # ------------------------------------------------------------
-cat >/usr/share/applications/install-to-disk.desktop <<'EOF'
+LIVEUSER_HOME="/home/liveuser"
+APPDIR="$LIVEUSER_HOME/.local/share/applications"
+
+mkdir -p "$APPDIR"
+
+cat >"$APPDIR/install-to-disk.desktop" <<'EOF'
 [Desktop Entry]
 Name=Install to Disk
 Comment=Install this system to your computer
-Exec=anaconda --liveinst
+Exec=anaconda --webui
 Icon=system-installer
 Terminal=false
 Type=Application
 Categories=System;
 EOF
 
-# ------------------------------------------------------------
-# Nur im Live-System behalten
-# ------------------------------------------------------------
-if ! grep -q 'boot=live' /proc/cmdline; then
-  rm -f /usr/share/applications/install-to-disk.desktop
-fi
+chown -R liveuser:liveuser "$LIVEUSER_HOME/.local"
+
