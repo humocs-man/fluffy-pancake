@@ -26,3 +26,5 @@ Terminal=false
 Type=Application
 Categories=System;
 EOF
+
+mkdir -p /home
