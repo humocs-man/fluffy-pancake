@@ -26,6 +26,3 @@ Terminal=false
 Type=Application
 Categories=System;
 EOF
-
-chown -R liveuser:liveuser "$LIVEUSER_HOME/.local"
-
