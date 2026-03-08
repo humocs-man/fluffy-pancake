@@ -47,9 +47,27 @@ fi
 exec > >(tee -a "$LOG") 2>&1
 
 abort() {
-  clear
-  echo "Setup abgebrochen."
-  exit 1
+  $DIALOG --title "Setup abbrechen?" --yesno \
+"Der Einrichtungs‑Assistent wird dann
+nicht erneut angezeigt.
+
+Alle Anwendungen können jederzeit
+über den COSMIC‑Shop installiert
+oder entfernt werden.
+
+Möchtest du den Setup‑Assistenten
+wirklich abbrechen?" \
+$HEIGHT $WIDTH
+
+  if [[ $? -eq 0 ]]; then
+    mkdir -p "$(dirname "$WIZARD_DONE")"
+    touch "$WIZARD_DONE"
+    clear
+    exit 0
+  fi
+
+  # User hat sich gegen Abbruch entschieden → zurück
+  return 0
 }
 
 ensure_flathub() {
