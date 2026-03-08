@@ -1,22 +1,17 @@
-#!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 
-# ------------------------------------------------------------
-# Installer-Komponenten für Live-ISO
-# ------------------------------------------------------------
-dnf -y install \
+# 1. /home komplett entfernen
+rm -rf /home
+
+# 2. Anaconda installieren
+dnf install -y \
   anaconda \
-  anaconda-webui 
-  
-# ------------------------------------------------------------
-# Desktop-Launcher für Live-User (COSMIC-kompatibel)
-# ------------------------------------------------------------
-LIVEUSER_HOME="/home/liveuser"
-APPDIR="$LIVEUSER_HOME/.local/share/applications"
+  anaconda-webui
 
-mkdir -p "$APPDIR"
+# 3. Desktop-Datei vorbereiten, aber OHNE /home zu benutzen
+INSTALLER_DESKTOP="/usr/share/applications/install-to-disk.desktop"
 
-cat >"$APPDIR/install-to-disk.desktop" <<'EOF'
+cat >"$INSTALLER_DESKTOP" <<'EOF'
 [Desktop Entry]
 Name=Install to Disk
 Comment=Install this system to your computer
@@ -27,4 +22,5 @@ Type=Application
 Categories=System;
 EOF
 
-mkdir -p /home
+# 4. Erst ganz am Ende /home anlegen
+mkdir -p /home/liveuser/.local/share/applications
