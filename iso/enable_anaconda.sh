@@ -6,10 +6,8 @@ set -euo pipefail
 # ------------------------------------------------------------
 dnf -y install \
   anaconda \
-  anaconda-webui \
-  cockpit \
-  cockpit-anaconda
-
+  anaconda-webui 
+  
 # ------------------------------------------------------------
 # Desktop-Launcher für Live-User (COSMIC-kompatibel)
 # ------------------------------------------------------------
