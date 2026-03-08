@@ -1,17 +1,22 @@
+#!/usr/bin/env bash
 set -euxo pipefail
 
-# 1. /home komplett entfernen
+# --------------------------------------------------------------------
+# Phase 1: Rootfs vorbereiten – Anaconda erwartet KEIN /home
+# --------------------------------------------------------------------
 rm -rf /home
 
-# 2. Anaconda installieren
+# --------------------------------------------------------------------
+# Phase 2: Installer installieren
+# --------------------------------------------------------------------
 dnf install -y \
   anaconda \
   anaconda-webui
 
-# 3. Desktop-Datei vorbereiten, aber OHNE /home zu benutzen
-INSTALLER_DESKTOP="/usr/share/applications/install-to-disk.desktop"
-
-cat >"$INSTALLER_DESKTOP" <<'EOF'
+# --------------------------------------------------------------------
+# Phase 3: Installer-Launcher systemweit anlegen
+# --------------------------------------------------------------------
+cat > /usr/share/applications/install-to-disk.desktop <<'EOF'
 [Desktop Entry]
 Name=Install to Disk
 Comment=Install this system to your computer
@@ -22,5 +27,7 @@ Type=Application
 Categories=System;
 EOF
 
-# 4. Erst ganz am Ende /home anlegen
-mkdir -p /home/liveuser/.local/share/applications
+# --------------------------------------------------------------------
+# Phase 4: Finalen Zielzustand herstellen
+# --------------------------------------------------------------------
+mkdir -p /home
