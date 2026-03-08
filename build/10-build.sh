@@ -13,6 +13,10 @@ source /ctx/build/copr-helpers.sh
 # Enable nullglob for all glob operations to prevent failures on empty matches
 shopt -s nullglob
 
+dnf5 remove -y \
+nvtop \
+htop
+
 echo "::group:: Install Packages"
 # flatpak und just sind im base-main vorhanden, aber wir ergänzen deine Tools
 dnf5 install -y \
