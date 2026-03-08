@@ -9,26 +9,26 @@ rm -rf /home
 # --------------------------------------------------------------------
 # Phase 2: Installer installieren
 # --------------------------------------------------------------------
+# Phase 2: Web-Installer installieren
+# --------------------------------------------------------------------
 dnf install -y \
   anaconda \
-  anaconda-gui \
   anaconda-live \
-  anaconda-widgets \
-  xorg-x11-server-Xwayland \
+  anaconda-webui \
   polkit
-
 # --------------------------------------------------------------------
 # Phase 3: Installer-Launcher systemweit anlegen
 # --------------------------------------------------------------------
 cat > /usr/share/applications/install-to-disk.desktop <<'EOF'
 [Desktop Entry]
-Name=Install to Disk
-Comment=Install this system to your computer
-Exec=Exec=pkexec anaconda
-Icon=system-software-install
+Name=Jetzt installieren
+Comment=Installiere das System auf die Festplatte
+Exec=firefox http://localhost:8006
+Icon=system-installer
 Terminal=false
 Type=Application
 Categories=System;
+
 EOF
 
 # --------------------------------------------------------------------
