@@ -8,11 +8,37 @@ LOG="/var/log/firstboot-setup.log"
 WIZARD_DONE="$HOME/.config/cosmic/firstboot.done"
 
 # ----------------------------
+# Detect live environment
+# ----------------------------
+if grep -q 'boot=live' /proc/cmdline; then
+  LIVE_MODE=yes
+else
+  LIVE_MODE=no
+fi
+
+
+# ----------------------------
 # Run only once
 # ----------------------------
-if [[ -f "$WIZARD_DONE" ]]; then
+if [[ "$LIVE_MODE" == no ]] && [[ -f "$WIZARD_DONE" ]]; then
   exit 0
 fi
+
+if [[ "$LIVE_MODE" == yes ]]; then
+  $DIALOG --title "COSMIC Live‑Umgebung" --msgbox \
+"Dies ist eine Live‑Vorschau des COSMIC‑Desktops.
+
+• Änderungen werden nicht gespeichert
+• Anwendungen werden hier nicht installiert
+
+Nach der Installation startet ein
+Setup‑Assistent, der bei der Auswahl
+von Anwendungen und optionalen Tools
+wie Homebrew hilft." \
+$HEIGHT $WIDTH
+  exit 0
+fi
+
 
 exec > >(tee -a "$LOG") 2>&1
 
