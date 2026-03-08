@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=COSMIC First Boot Setup
-Exec=/usr/libexec/cosmic/firstboot-setup.sh
-OnlyShowIn=COSMIC;
-X-GNOME-Autostart-enabled=true
-NoDisplay=true
-
