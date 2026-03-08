@@ -29,7 +29,7 @@ jobs:
           image-ref: ghcr.io/${{ github.repository }}:stable
           builder-distro: fedora
           hook-post-rootfs: ${{ github.workspace }}/iso/enable_anaconda.sh
-          kargs: "boot=live inst.live"
+          kargs: "boot=live inst.webui"
 
       - name: Rename + checksum
         run: |
