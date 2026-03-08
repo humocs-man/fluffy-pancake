@@ -7,6 +7,10 @@ WIDTH=74
 LOG="/var/log/firstboot-setup.log"
 WIZARD_DONE="$HOME/.config/cosmic/firstboot.done"
 
+if [[ -z "${TERM:-}" ]]; then
+  exec cosmic-terminal -- /usr/libexec/cosmic/session.d/firstboot-setup.sh
+fi
+
 # ----------------------------
 # Detect live environment
 # ----------------------------
