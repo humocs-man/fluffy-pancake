@@ -15,6 +15,7 @@ dnf install -y \
   anaconda \
   anaconda-live \
   anaconda-webui \
+  anaconda-webui-banding-fedora \
   polkit
 # --------------------------------------------------------------------
 # Phase 3: Installer-Launcher systemweit anlegen
