@@ -28,7 +28,7 @@ wirklich abbrechen?" \
 $HEIGHT $WIDTH
 
   if [[ $? -eq 0 ]]; then
-    rm -f /etc/myos/firstboot
+    systemctl start firstboot-cleanup.service
     systemctl --user disable firstboot-setup.service
     clear
     exit 0
@@ -293,7 +293,7 @@ $HEIGHT $WIDTH 0
 # ----------------------------
 # Mark wizard as done
 # ----------------------------
-rm -f /etc/myos/firstboot
+systemctl start firstboot-cleanup.service
 systemctl --user disable firstboot-setup.service
 
 $DIALOG --title "Fertig" --msgbox \
