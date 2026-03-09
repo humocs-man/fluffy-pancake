@@ -29,7 +29,7 @@ name: Reusable Build
   pull_request:
     paths:
       - ".github/workflows/reusable-build-iso-anaconda.yml"
-      - "iso_files/configure_iso_anaconda.sh"
+      - "iso/enable_anaconda.sh"
 
 env:
   IMAGE_REGISTRY: "ghcr.io/ublue-os"
