@@ -50,7 +50,6 @@ systemctl enable podman.socket
 systemctl enable bluetooth.service
 systemctl enable libvirtd.service
 systemctl enable virtlogd.service
-systemctl --global enable firstboot-setup.service
 
 echo "::endgroup::"
 
