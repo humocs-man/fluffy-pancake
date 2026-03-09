@@ -23,7 +23,7 @@ cat > /usr/share/applications/install-to-disk.desktop <<'EOF'
 [Desktop Entry]
 Name=Jetzt installieren
 Comment=Installiere das System auf die Festplatte
-Exec=firefox http://localhost:8006
+Exec=xdg-open http://localhost:8080
 Icon=system-installer
 Terminal=false
 Type=Application
