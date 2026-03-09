@@ -7,18 +7,40 @@ set -euxo pipefail
 rm -rf /home
 
 # --------------------------------------------------------------------
-# Phase 2: Installer installieren
-# --------------------------------------------------------------------
-# Phase 2: Web-Installer installieren
+# Phase 2: Installer + Branding installieren
 # --------------------------------------------------------------------
 dnf install -y \
   anaconda \
   anaconda-live \
   anaconda-webui \
-  anaconda-webui-banding-fedora \
-  polkit
+  anaconda-webui-branding-fedora \
+  polkit \
+  firefox
+
 # --------------------------------------------------------------------
-# Phase 3: Installer-Launcher systemweit anlegen
+# Phase 3: WebUI systemd-Servicefile anlegen
+# --------------------------------------------------------------------
+cat > /usr/lib/systemd/system/anaconda-webui.service <<'EOF'
+[Unit]
+Description=Anaconda Web UI
+After=network.target graphical.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/anaconda-webui
+Restart=on-failure
+
+[Install]
+WantedBy=graphical.target
+EOF
+
+# --------------------------------------------------------------------
+# Phase 4: Service aktivieren
+# --------------------------------------------------------------------
+systemctl enable anaconda-webui.service
+
+# --------------------------------------------------------------------
+# Phase 5: Desktop-Launcher für den Installer
 # --------------------------------------------------------------------
 cat > /usr/share/applications/install-to-disk.desktop <<'EOF'
 [Desktop Entry]
@@ -29,10 +51,9 @@ Icon=system-installer
 Terminal=false
 Type=Application
 Categories=System;
-
 EOF
 
 # --------------------------------------------------------------------
-# Phase 4: Finalen Zielzustand herstellen
+# Phase 6: Finalen Zielzustand herstellen
 # --------------------------------------------------------------------
 mkdir -p /home
