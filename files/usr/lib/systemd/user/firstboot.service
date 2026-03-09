@@ -1,0 +1,10 @@
+[Unit]
+Description=Run First Boot Setup Wizard
+ConditionPathExists=/etc/myos/firstboot
+
+[Service]
+ExecStart=/usr/libexec/firstboot-setup.sh
+Type=oneshot
+
+[Install]
+WantedBy=default.target
