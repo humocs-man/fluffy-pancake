@@ -4,6 +4,11 @@ name: Build Stable ISOs
 # Builds: 2 Stable ISOs
 #   - amd64 × main
 #   - amd64 × nvidia-open
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
 on:
   workflow_dispatch:
     inputs:
