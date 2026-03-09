@@ -5,42 +5,10 @@ DIALOG=dialog
 HEIGHT=20
 WIDTH=74
 LOG="/var/log/firstboot-setup.log"
-WIZARD_DONE="$HOME/.config/cosmic/firstboot.done"
+
 
 if [[ -z "${TERM:-}" ]]; then
-  exec cosmic-terminal -- /usr/libexec/cosmic/session.d/firstboot-setup.sh
-fi
-
-# ----------------------------
-# Detect live environment
-# ----------------------------
-if grep -q 'boot=live' /proc/cmdline; then
-  LIVE_MODE=yes
-else
-  LIVE_MODE=no
-fi
-
-
-# ----------------------------
-# Run only once
-# ----------------------------
-if [[ "$LIVE_MODE" == no ]] && [[ -f "$WIZARD_DONE" ]]; then
-  exit 0
-fi
-
-if [[ "$LIVE_MODE" == yes ]]; then
-  $DIALOG --title "COSMIC Live‑Umgebung" --msgbox \
-"Dies ist eine Live‑Vorschau des COSMIC‑Desktops.
-
-• Änderungen werden nicht gespeichert
-• Anwendungen werden hier nicht installiert
-
-Nach der Installation startet ein
-Setup‑Assistent, der bei der Auswahl
-von Anwendungen und optionalen Tools
-wie Homebrew hilft." \
-$HEIGHT $WIDTH
-  exit 0
+  exec cosmic-terminal -- /usr/libexec/firstboot-setup.sh
 fi
 
 
@@ -60,8 +28,8 @@ wirklich abbrechen?" \
 $HEIGHT $WIDTH
 
   if [[ $? -eq 0 ]]; then
-    mkdir -p "$(dirname "$WIZARD_DONE")"
-    touch "$WIZARD_DONE"
+    rm -f /etc/myos/firstboot
+    systemctl --user disable firstboot-setup.service
     clear
     exit 0
   fi
@@ -325,8 +293,8 @@ $HEIGHT $WIDTH 0
 # ----------------------------
 # Mark wizard as done
 # ----------------------------
-mkdir -p "$(dirname "$WIZARD_DONE")"
-touch "$WIZARD_DONE"
+rm -f /etc/myos/firstboot
+systemctl --user disable firstboot-setup.service
 
 $DIALOG --title "Fertig" --msgbox \
 "Die Einrichtung ist abgeschlossen.
