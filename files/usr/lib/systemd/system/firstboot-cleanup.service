@@ -1,0 +1,6 @@
+[Unit]
+Description=Remove firstboot marker
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rm -f /etc/myos/firstboot
