@@ -1,46 +1,30 @@
-name: Build Live ISO (Titanoboa + Anaconda)
-
+---
+name: Build Stable ISOs
+# This workflow ONLY builds Stable ISOs (not LTS, LTS-HWE, or GTS)
+# Builds: 2 Stable ISOs
+#   - amd64 × main
+#   - amd64 × nvidia-open
 on:
   workflow_dispatch:
-
-permissions:
-  contents: read
-  packages: read
+    inputs:
+      upload_artifacts:
+        description: 'Upload ISOs as job artifacts'
+        type: boolean
+        default: true
+      upload_r2:
+        description: 'Upload ISOs to Cloudflare R2'
+        type: boolean
+        default: false
+ # schedule:
+   # - cron: '0 2 1 * *'  # 2am UTC on the 1st of every month
 
 jobs:
-  iso:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo apt-get clean
-       
-      - name: Build Live ISO
-        id: iso
-        uses: ublue-os/titanoboa@main
-        with:
-          image-ref: ghcr.io/${{ github.repository }}:stable
-          builder-distro: fedora
-          hook-post-rootfs: ${{ github.workspace }}/iso/enable_anaconda.sh
-          kargs: "boot=live inst.webui"
-
-      - name: Rename + checksum
-        run: |
-          set -euo pipefail
-          mkdir -p output
-          mv "${{ steps.iso.outputs.iso-dest }}" \
-             output/${{ github.event.repository.name }}-live.iso
-          (cd output && sha256sum *.iso > SHA256SUMS)
-
-      - name: Upload ISO
-        uses: actions/upload-artifact@v4
-        with:
-          name: live-iso
-          path: output/*
+  build-iso-stable:
+    name: Build Stable ISOs
+    uses: ./.github/workflows/reusable-build-iso-anaconda.yml
+    secrets: inherit
+    with:
+      image_version: stable  # Strictly builds Stable ISOs only
+      image_tag: stable
+      upload_artifacts: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts || false }}
+      upload_r2: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_r2 || true }}
