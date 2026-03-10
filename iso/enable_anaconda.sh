@@ -29,7 +29,6 @@ glib-compile-schemas /usr/share/glib-2.0/schemas
 # Install Anaconda (GNOME backend is implicit)
 # -------------------------------------------------------------------
 dnf install -y \
-  dnf install -y \
   anaconda-webui \
   cockpit-ws \
   cockpit-bridge \
