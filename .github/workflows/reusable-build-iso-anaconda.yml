@@ -45,7 +45,7 @@ jobs:
         with:
           image-ref: ghcr.io/humocs-man/fluffy-pancake:${{ inputs.image_tag }}
           flatpaks-list: ${{ steps.flatpaks.outputs.file }}
-          hook-post-rootfs: ${{ github.workspace }}/iso_files/configure_iso_anaconda.sh
+          hook-post-rootfs: ${{ github.workspace }}/iso/enable_anaconda.sh
           kargs: NONE
           builder-distro: fedora
 
