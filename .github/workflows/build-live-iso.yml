@@ -19,7 +19,6 @@ jobs:
     uses: ./.github/workflows/reusable-build-iso-anaconda.yml
     secrets: inherit
     with:
-      image_version: fluffy-pancake
       image_tag: stable
       upload_artifacts: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_artifacts || false }}
       upload_r2: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_r2 || true }}
