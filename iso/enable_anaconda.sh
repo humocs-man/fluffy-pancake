@@ -29,7 +29,10 @@ glib-compile-schemas /usr/share/glib-2.0/schemas
 # Install Anaconda (GNOME backend is implicit)
 # -------------------------------------------------------------------
 dnf install -y \
-  anaconda-live \
+  dnf install -y \
+  anaconda-webui \
+  cockpit-ws \
+  cockpit-bridge \
   libblockdev-btrfs \
   libblockdev-lvm \
   libblockdev-dm \
