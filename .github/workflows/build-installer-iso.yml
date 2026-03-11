@@ -40,6 +40,7 @@ jobs:
           sudo podman run --rm --privileged \
             -v "${{ github.workspace }}:/workspace" \
             -v "${{ github.workspace }}/output:/output" \
+            -v "/var/lib/containers/storage:/var/lib/containers/storage" \
             quay.io/centos-bootc/bootc-image-builder:latest \
             /workspace/iso/config.toml
 
