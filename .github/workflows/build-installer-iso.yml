@@ -18,25 +18,15 @@ jobs:
             genisoimage \
             isomd5sum \
             syslinux-utils \
-            wget \
-            curl \
-            jq
+            wget
 
-      - name: Download latest Fedora Server ISO
+      - name: Download Fedora Server ISO (pinned)
         run: |
-          FEDORA_BASE=https://download.fedoraproject.org/pub/fedora/linux/releases
-          FEDORA_VER=$(curl -s https://fedoraproject.org/releases.json \
-            | jq -r '.[] | select(.state=="current") | .version')
+          FEDORA_VERSION=43
+          FEDORA_BUILD=1.6
 
-          ISO_DIR="$FEDORA_BASE/$FEDORA_VER/Server/x86_64/iso"
-
-          ISO_NAME=$(curl -s "$ISO_DIR/" \
-            | grep -oP 'Fedora-Server-dvd-x86_64-[^"]+\.iso' \
-            | head -n1)
-
-          echo "Using ISO: $ISO_NAME"
-
-          wget -O fedora-server.iso "$ISO_DIR/$ISO_NAME"
+          wget -O fedora-server.iso \
+            https://download.fedoraproject.org/pub/fedora/linux/releases/${FEDORA_VERSION}/Server/x86_64/iso/Fedora-Server-dvd-x86_64-${FEDORA_VERSION}-${FEDORA_BUILD}.iso
 
       - name: Install mkksiso
         run: |
@@ -48,7 +38,7 @@ jobs:
       - name: Build installer ISO
         run: |
           mkksiso \
-            --ks iso/bootc.ks \
+            --ks installer/bootc.ks \
             --cmdline "inst.ks=cdrom:/bootc.ks" \
             fedora-server.iso \
             fluffy-pancake-installer.iso
