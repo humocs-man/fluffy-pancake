@@ -21,7 +21,7 @@ jobs:
       # 🔑 WICHTIG: bootc-image-builder zieht Images NICHT selbst
       - name: Pull bootc base image
         run: |
-          docker pull ghcr.io/dein/fluffy-pancake:latest
+          docker pull ghcr.io/humocs-man/fluffy-pancake:stable
 
       - name: Pull bootc-image-builder container
         run: |
