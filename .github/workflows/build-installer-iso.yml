@@ -28,7 +28,7 @@ jobs:
           docker pull quay.io/centos-bootc/bootc-image-builder:latest
 
       - name: Build ISO
-        run:
+        run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             -v ${{ github.workspace }}/output:/output \
