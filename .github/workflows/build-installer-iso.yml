@@ -29,13 +29,11 @@ jobs:
 
       - name: Build ISO
         run: |
-          mkdir -p output
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             -v ${{ github.workspace }}/output:/output \
             quay.io/centos-bootc/bootc-image-builder:latest \
-            --config /workspace/iso/config.toml \
-            --output-dir /output
+            --config /workspace/iso/config.toml
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
