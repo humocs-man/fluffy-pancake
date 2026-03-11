@@ -28,14 +28,15 @@ jobs:
           FEDORA_VER=$(curl -s https://fedoraproject.org/releases.json \
             | jq -r '.[] | select(.state=="current") | .version')
 
-          ISO_URL=$(curl -s $FEDORA_BASE/$FEDORA_VER/Server/x86_64/iso/ \
+          ISO_DIR="$FEDORA_BASE/$FEDORA_VER/Server/x86_64/iso"
+
+          ISO_NAME=$(curl -s "$ISO_DIR/" \
             | grep -oP 'Fedora-Server-dvd-x86_64-[^"]+\.iso' \
             | head -n1)
 
-          wget -O fedora-server.iso \
-            $FEDORA_BASE/$FEDORA_VER/Server/x86_64/iso/$ISO_URL
+          echo "Using ISO: $ISO_NAME"
 
-
+          wget -O fedora-server.iso "$ISO_DIR/$ISO_NAME"
 
       - name: Install mkksiso
         run: |
