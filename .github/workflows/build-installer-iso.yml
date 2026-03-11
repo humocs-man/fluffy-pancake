@@ -35,7 +35,7 @@ jobs:
       - name: Build installer ISO
         run: |
           mkksiso \
-            --ks installer/bootc.ks \
+            --ks iso/bootc.ks \
             --cmdline "inst.ks=cdrom:/bootc.ks" \
             fedora-server.iso \
             fluffy-pancake-installer.iso
