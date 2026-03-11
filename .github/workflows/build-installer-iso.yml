@@ -29,12 +29,15 @@ jobs:
 
       - name: Build ISO
         run: |
-          docker run --rm --privileged\
-            -v ${{ github.workspace }}:/workspace \
-            -v ${{ github.workspace }}/output:/output \
+          docker run --rm --privileged \
+            -v "${{ github.workspace }}:/workspace" \
+            -v "${{ github.workspace }}/output:/output" \
+            -v "/var/lib/containers/storage:/var/lib/containers/storage" \
             quay.io/centos-bootc/bootc-image-builder:latest \
+            -- \
             /workspace \
             --config /workspace/iso/config.toml
+
 
 
       - name: Upload ISO artifact
