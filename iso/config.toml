@@ -1,0 +1,6 @@
+[image]
+type = "anaconda-iso"
+arch = "x86_64"
+
+[installer]
+image = "ghcr.io/humocs-man/fluffy-pancake:stable"
