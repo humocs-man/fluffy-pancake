@@ -1,0 +1,49 @@
+name: Build bootc installer ISO
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - installer/bootc.ks
+      - .github/workflows/build-installer-iso.yml
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            genisoimage \
+            isomd5sum \
+            syslinux-utils \
+            wget
+
+      - name: Download Fedora Server ISO
+        run: |
+          wget -O fedora-server.iso \
+            https://download.fedoraproject.org/pub/fedora/linux/releases/40/Server/x86_64/iso/Fedora-Server-dvd-x86_64-40-1.14.iso
+
+      - name: Install mkksiso
+        run: |
+          wget -O mkksiso \
+            https://raw.githubusercontent.com/rhinstaller/anaconda/main/scripts/mkksiso
+          chmod +x mkksiso
+          sudo mv mkksiso /usr/local/bin/
+
+      - name: Build installer ISO
+        run: |
+          mkksiso installer/bootc.ks \
+            fedora-server.iso \
+            fluffy-pancake-installer.iso
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluffy-pancake-installer
+          path: fluffy-pancake-installer.iso
