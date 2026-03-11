@@ -2,9 +2,9 @@ name: Build Installer ISO
 
 on:
   workflow_dispatch:
-  #push:
-    #branches:
-     # - main
+  push:
+    branches:
+      - main
 
 jobs:
   build-iso:
@@ -17,6 +17,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # 🔑 WICHTIG: bootc-image-builder zieht Images NICHT selbst
+      - name: Pull bootc base image
+        run: |
+          docker pull ghcr.io/dein/fluffy-pancake:latest
 
       - name: Pull bootc-image-builder container
         run: |
