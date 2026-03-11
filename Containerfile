@@ -36,7 +36,6 @@
 FROM scratch AS ctx
 
 COPY build /build
-COPY custom /custom
 
 ## Alternative base images, no desktop included (uncomment to use):
 FROM ghcr.io/ublue-os/base-main:latest    
