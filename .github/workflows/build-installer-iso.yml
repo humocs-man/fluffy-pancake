@@ -18,12 +18,19 @@ jobs:
             genisoimage \
             isomd5sum \
             syslinux-utils \
-            wget
+            wget \
+            curl \
+            jq
 
       - name: Download latest Fedora Server ISO
         run: |
+          FEDORA_BASE=https://download.fedoraproject.org/pub/fedora/linux/releases
+          FEDORA_VER=$(curl -s https://getfedora.org/releases.json | jq -r '.[] | select(.state=="current") | .version')
+  
+          echo "Using Fedora $FEDORA_VER"
+  
           wget -O fedora-server.iso \
-            https://download.fedoraproject.org/pub/fedora/linux/releases/latest/Server/x86_64/iso/Fedora-Server-dvd-x86_64-latest.iso
+          $FEDORA_BASE/$FEDORA_VER/Server/x86_64/iso/Fedora-Server-dvd-x86_64-$FEDORA_VER-*.iso
 
       - name: Install mkksiso
         run: |
