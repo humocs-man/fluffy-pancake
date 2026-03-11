@@ -18,21 +18,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🔑 WICHTIG: bootc-image-builder zieht Images NICHT selbst
-      - name: Pull bootc base image
+      - name: Install podman
         run: |
-          docker pull ghcr.io/humocs-man/fluffy-pancake:stable
+          sudo apt-get update
+          sudo apt-get install -y podman
 
-      - name: Pull bootc-image-builder container
+      - name: Pull installer image (bootc rootfs)
         run: |
-          docker pull quay.io/centos-bootc/bootc-image-builder:latest
+          sudo podman pull ghcr.io/humocs-man/fluffy-pancake:stable
+
+      - name: Pull bootc-image-builder
+        run: |
+          sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest
 
       - name: Build ISO
         run: |
-          docker run --rm --privileged \
+          sudo podman run --rm --privileged \
             -v "${{ github.workspace }}:/workspace" \
             -v "${{ github.workspace }}/output:/output" \
-            -v "/var/lib/containers/storage:/var/lib/containers/storage" \
             quay.io/centos-bootc/bootc-image-builder:latest \
             /workspace/iso/config.toml
 
