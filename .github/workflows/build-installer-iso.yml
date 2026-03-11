@@ -1,11 +1,18 @@
-name: Build bootc installer ISO
+name: Build ISO
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build-iso:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: read
 
     steps:
       - name: Checkout repository
@@ -14,37 +21,24 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            genisoimage \
-            isomd5sum \
-            syslinux-utils \
-            wget
+          sudo apt-get install -y qemu-utils xz-utils
 
-      - name: Download Fedora Server ISO (pinned)
+      - name: Pull bootc-image-builder container
         run: |
-          FEDORA_VERSION=43
-          FEDORA_BUILD=1.6
+          docker pull quay.io/centos-bootc/bootc-image-builder:latest
 
-          wget -O fedora-server.iso \
-            https://download.fedoraproject.org/pub/fedora/linux/releases/${FEDORA_VERSION}/Server/x86_64/iso/Fedora-Server-dvd-x86_64-${FEDORA_VERSION}-${FEDORA_BUILD}.iso
-
-      - name: Install mkksiso
+      - name: Build ISO
         run: |
-          wget -O mkksiso \
-            https://raw.githubusercontent.com/rhinstaller/anaconda/main/scripts/mkksiso
-          chmod +x mkksiso
-          sudo mv mkksiso /usr/local/bin/
-
-      - name: Build installer ISO
-        run: |
-          mkksiso \
-            --ks installer/bootc.ks \
-            --cmdline "inst.ks=cdrom:/bootc.ks" \
-            fedora-server.iso \
-            fluffy-pancake-installer.iso
+          mkdir -p output
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -v ${{ github.workspace }}/output:/output \
+            quay.io/centos-bootc/bootc-image-builder:latest \
+            --config /workspace/iso/config.toml \
+            --output-dir /output
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fluffy-pancake-installer
-          path: fluffy-pancake-installer.iso
+          name: fluffy-pancake-installer.iso
+          path: output/*.iso
