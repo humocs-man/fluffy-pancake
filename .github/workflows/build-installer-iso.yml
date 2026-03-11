@@ -27,7 +27,7 @@ jobs:
       - name: Download Fedora Server ISO
         run: |
           wget -O fedora-server.iso \
-            https://download.fedoraproject.org/pub/fedora/linux/releases/40/Server/x86_64/iso/Fedora-Server-dvd-x86_64-40-1.14.iso
+            https://download.fedoraproject.org/pub/fedora/linux/releases/latest/Server/x86_64/iso/Fedora-Server-dvd-x86_64-40-1.14.iso
 
       - name: Install mkksiso
         run: |
