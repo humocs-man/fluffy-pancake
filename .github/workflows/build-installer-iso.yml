@@ -23,7 +23,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y podman
 
-      - name: Pull installer image (bootc rootfs)
+      - name: Prepare output directory
+        run: |
+          mkdir -p output
+
+      - name: Pull installer image
         run: |
           sudo podman pull ghcr.io/humocs-man/fluffy-pancake:stable
 
