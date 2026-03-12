@@ -3,7 +3,8 @@ Description=Run First Boot Setup Wizard
 ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
-ExecStart=/usr/libexec/firstboot-setup.sh
+ExecStart=%h/.config/firstboot/firstboot-setup.sh
+
 Type=oneshot
 
 [Install]
