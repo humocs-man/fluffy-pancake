@@ -36,7 +36,7 @@ jobs:
             -v /var/lib/containers/storage:/var/lib/containers/storage \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
-            --rootfs btrfs
+            --rootfs btrfs \
             --output /output/ \
             ghcr.io/humocs-man/fluffy-pancake:stable
 
