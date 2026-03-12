@@ -1,6 +1,6 @@
 [Unit]
 Description=Run First Boot Setup Wizard
-ConditionPathExists=/etc/myos/firstboot
+ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
 ExecStart=/usr/libexec/firstboot-setup.sh
