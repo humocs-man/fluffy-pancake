@@ -63,8 +63,9 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/10-build.sh
 
 COPY files/ /
-RUN chmod +x /usr/libexec/firstboot-setup.sh
-RUN systemctl enable firstboot-setup.service
+RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
+    systemctl --global enable firstboot-user.service
+
 ### LINTING
 ## Verify final image and contents are correct.
 RUN bootc container lint
