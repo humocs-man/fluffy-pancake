@@ -21,10 +21,16 @@ jobs:
       - name: Prepare output directory
         run: mkdir -p output
 
+      # Wichtig: Den Pull explizit machen, damit Layer im lokalen Storage landen
+      - name: Pull base image
+        run: |
+          # Falls das Image privat ist, hier ein 'sudo podman login' davor setzen
+          sudo podman pull ghcr.io/humocs-man/fluffy-pancake:stable
+
       - name: Build ISO (Interactive Mode)
         run: |
-          # Wir lassen die --config Flag einfach weg.
-          # Dadurch wird eine Standard-ISO ohne Vorbelegungen erstellt.
+          # Wir mounten /var/lib/containers/storage, damit der Builder 
+          # das oben gepullte Image direkt findet.
           sudo podman run --rm --privileged \
             -v ./output:/output \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
