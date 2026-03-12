@@ -40,11 +40,6 @@ copr_install_isolated "ryanabx/cosmic-epoch" \
   cosmic-desktop
 echo "::endgroup::"
 
-#firstboot-Marker setzen
-mkdir -p /etc/myos
-: > /etc/myos/firstboot
-
-
 echo "::group:: System Configuration"
 systemctl enable podman.socket
 systemctl enable bluetooth.service
