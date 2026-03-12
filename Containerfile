@@ -64,7 +64,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
 
 COPY files/ /
 RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
-    systemctl --global enable firstboot-user.service
+    systemctl --global enable firstboot-setup.service
 
 ### LINTING
 ## Verify final image and contents are correct.
