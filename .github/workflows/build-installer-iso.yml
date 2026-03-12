@@ -32,11 +32,13 @@ jobs:
           # Wir mounten /var/lib/containers/storage, damit der Builder 
           # das oben gepullte Image direkt findet.
           sudo podman run --rm --privileged \
+            -v ./iso/config.toml:/config.toml:ro \
             -v ./output:/output \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type anaconda-iso \
             --rootfs btrfs \
+            --config /config.toml \
             --output /output/ \
             ghcr.io/humocs-man/fluffy-pancake:stable
 
