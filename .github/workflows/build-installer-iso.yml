@@ -21,19 +21,14 @@ jobs:
       - name: Prepare output directory
         run: mkdir -p output
 
-      - name: Pull base image
+      - name: Build ISO (Interactive Mode)
         run: |
-          # Falls das Repository privat ist, hier vorher ein 'podman login' einfügen
-          sudo podman pull ghcr.io/humocs-man/fluffy-pancake:stable
-
-      - name: Build ISO with bootc-image-builder
-        run: |
+          # Wir lassen die --config Flag einfach weg.
+          # Dadurch wird eine Standard-ISO ohne Vorbelegungen erstellt.
           sudo podman run --rm --privileged \
-            -v .:/workspace \
             -v ./output:/output \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
             quay.io/centos-bootc/bootc-image-builder:latest \
-            --config /workspace/iso/config.toml \
             --type anaconda-iso \
             --output /output/ \
             ghcr.io/humocs-man/fluffy-pancake:stable
@@ -42,7 +37,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: installer-iso
-          # Wir nutzen Wildcards, da der Builder die ISO oft in 
-          # einen Unterordner wie 'output/anaconda/' legt.
           path: output/**/disk.iso
           if-no-files-found: error
