@@ -18,34 +18,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install podman
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y podman
-
       - name: Prepare output directory
-        run: |
-          mkdir -p output
+        run: mkdir -p output
 
-      - name: Pull installer image
+      - name: Pull base image
         run: |
+          # Falls das Repository privat ist, hier vorher ein 'podman login' einfügen
           sudo podman pull ghcr.io/humocs-man/fluffy-pancake:stable
 
-      - name: Pull bootc-image-builder
-        run: |
-          sudo podman pull quay.io/centos-bootc/bootc-image-builder:latest
-
-      - name: Build ISO
+      - name: Build ISO with bootc-image-builder
         run: |
           sudo podman run --rm --privileged \
-            -v "${{ github.workspace }}:/workspace" \
-            -v "${{ github.workspace }}/output:/output" \
-            -v "/var/lib/containers/storage:/var/lib/containers/storage" \
+            -v .:/workspace \
+            -v ./output:/output \
+            -v /var/lib/containers/storage:/var/lib/containers/storage \
             quay.io/centos-bootc/bootc-image-builder:latest \
-            /workspace/iso/config.toml
+            --config /workspace/iso/config.toml \
+            --type anaconda-iso \
+            --output /output/ \
+            ghcr.io/humocs-man/fluffy-pancake:stable
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: installer-iso
-          path: output/*.iso
+          # Wir nutzen Wildcards, da der Builder die ISO oft in 
+          # einen Unterordner wie 'output/anaconda/' legt.
+          path: output/**/disk.iso
+          if-no-files-found: error
