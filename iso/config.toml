@@ -1,6 +1,7 @@
-[image]
-type = "anaconda-iso"
-arch = "x86_64"
+[customizations.installer.kickstart]
+contents = """
+lang de_DE.UTF-8
+keyboard de
 
-[installer]
-image = "ghcr.io/humocs-man/fluffy-pancake:stable"
+# Alles andere bleibt interaktiv
+"""
