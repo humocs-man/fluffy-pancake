@@ -4,13 +4,13 @@ set -euo pipefail
 DIALOG=dialog
 HEIGHT=20
 WIDTH=74
-LOG="/var/log/firstboot-setup.log"
+LOG="$HOME/.local/state/firstboot-setup.log"
+
 
 
 if [[ -z "${TERM:-}" ]]; then
-  exec cosmic-terminal -- /usr/libexec/firstboot-setup.sh
+  exec cosmic-terminal -- "$HOME/.config/firstboot/firstboot-user.sh"
 fi
-
 
 exec > >(tee -a "$LOG") 2>&1
 
@@ -28,10 +28,12 @@ wirklich abbrechen?" \
 $HEIGHT $WIDTH
 
   if [[ $? -eq 0 ]]; then
-    systemctl start firstboot-cleanup.service
+    rm -f "$HOME/.config/firstboot/run"
     systemctl --user disable firstboot-setup.service
     clear
     exit 0
+  fi
+
   fi
 
   # User hat sich gegen Abbruch entschieden → zurück
@@ -293,8 +295,9 @@ $HEIGHT $WIDTH 0
 # ----------------------------
 # Mark wizard as done
 # ----------------------------
-systemctl start firstboot-cleanup.service
-systemctl --user disable firstboot-setup.service
+rm -f "$HOME/.config/firstboot/run"
+systemctl --user disable firstboot-user.service
+
 
 $DIALOG --title "Fertig" --msgbox \
 "Die Einrichtung ist abgeschlossen.
