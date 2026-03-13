@@ -131,6 +131,7 @@ MEDIA=$(choose_list \
   "Medien & Unterhaltung" \
   "Wiedergabe von Audio und Video:" \
   vlc "VLC Media Player" \
+  showtime "Gnome Video Player"
   spotify "Spotify Client" \
 )
 
@@ -199,6 +200,24 @@ zenity --question \
 USE_BREW=$([[ $? -eq 0 ]] && echo yes || echo no)
 
 # ----------------------------
+# Auto‑Update
+# ----------------------------
+zenity --question \
+  --title="Automatische Systemaktualisierung" \
+  --text="Wenn diese Option aktiviert ist, prüft das System einmal pro Woche automatisch auf neue Aktualisierungen und installiert sie im Hintergrund.
+
+Du kannst den Aktualisierungsdienst jederzeit manuell starten mit:
+
+  systemctl --user start bootc-update.service
+
+Ohne automatische Updates kannst du Aktualisierungen jederzeit selbst anstoßen mit:
+
+  bootc upgrade"
+
+AUTO_UPDATE=$([[ $? -eq 0 ]] && echo yes || echo no)
+
+
+# ----------------------------
 # Summary
 # ----------------------------
 SUMMARY="Browser: ${BROWSERS:-keine}
@@ -211,7 +230,9 @@ E‑Mail: ${MAIL:-keine}
 Entwicklung: ${DEV:-keine}
 System: ${SYSTEM:-keine}
 
-Homebrew: $USE_BREW"
+Homebrew: $USE_BREW
+Automatische Updates: $AUTO_UPDATE"
+
 
 zenity --question \
   --title="Zusammenfassung" \
@@ -248,6 +269,8 @@ ensure_flathub
   echo "55"; echo "# Installiere Medien..."
   [[ "$MEDIA" == *vlc* ]]     && flatpak install -y flathub org.videolan.VLC
   [[ "$MEDIA" == *spotify* ]] && flatpak install -y flathub com.spotify.Client
+  [[ "$MEDIA" == *showtime* ]] && flatpak install -y flathub org.gnome.Showtime
+
 
   echo "70"; echo "# Installiere Audio/Video‑Tools..."
   [[ "$AV" == *shotcut* ]]  && flatpak install -y flathub org.shotcut.Shotcut
@@ -279,6 +302,13 @@ ensure_flathub
     --text="Bitte warten..." \
     --percentage=0 \
     --auto-close
+
+# ----------------------------
+# Auto‑Update aktivieren
+# ----------------------------
+if [[ "$AUTO_UPDATE" == yes ]]; then
+  systemctl --user enable --now bootc-update.timer
+fi
 
 # ----------------------------
 # Mark wizard as done
