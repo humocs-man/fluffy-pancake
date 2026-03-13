@@ -29,7 +29,7 @@ Möchtest du den Setup‑Assistenten wirklich abbrechen?" \
 
   rm -f "$HOME/.config/firstboot/run"
   systemctl --user disable firstboot-setup.service >/dev/null 2>&1 || true
-  exit 0
+  exit 1
 }
 
 # ------------------------------------------------------------
@@ -38,7 +38,6 @@ Möchtest du den Setup‑Assistenten wirklich abbrechen?" \
 cleanup() {
   local code=$?
   if [[ $code -ne 0 ]]; then
-    echo "Wizard mit Fehler beendet (Exitcode: $code)."
     rm -f "$HOME/.config/firstboot/run"
     systemctl --user disable firstboot-setup.service >/dev/null 2>&1 || true
   fi
@@ -86,7 +85,7 @@ choose_list() {
   shift 2
 
   if (( $# % 2 != 0 )); then
-    echo "choose_list: Ungerade Anzahl Argumente (id/beschreibung Paare erwartet)." >&2
+    echo "choose_list: Ungerade Anzahl Argumente." >&2
     exit 1
   fi
 
@@ -96,8 +95,7 @@ choose_list() {
     shift 2
   done
 
-  local result
-  result=$(zenity --list \
+  zenity --list \
     --title="$title" \
     --text="$text" \
     --checklist \
@@ -106,9 +104,7 @@ choose_list() {
     --column="Beschreibung" \
     --separator="|" \
     "${rows[@]}" \
-  ) || abort
-
-  echo "${result:-}"
+  || abort
 }
 
 # ------------------------------------------------------------
@@ -136,7 +132,7 @@ BROWSERS=$(choose_list \
 )
 
 OFFICE=$(choose_list \
-  "Office &amp; Dokumente" \
+  "Office & Dokumente" \
   "<big><b>Office &amp; Dokumente</b></big>\nAnwendungen für Büroarbeit und PDFs." \
   libreoffice "Umfangreiche Office‑Suite für lokale Dokumente" \
   onlyoffice  "Moderne Oberfläche, hohe MS‑Office‑Kompatibilität" \
@@ -146,7 +142,7 @@ OFFICE=$(choose_list \
 )
 
 GRAPHICS=$(choose_list \
-  "Grafik &amp; Kreativ" \
+  "Grafik & Kreativ" \
   "<big><b>Grafik &amp; Kreativ</b></big>\nWerkzeuge für Bildbearbeitung und Illustration." \
   gimp     "Leistungsstarke Bildbearbeitung für Fotos" \
   krita    "Digitale Malerei und Illustration" \
@@ -154,7 +150,7 @@ GRAPHICS=$(choose_list \
 )
 
 MEDIA=$(choose_list \
-  "Medien &amp; Unterhaltung" \
+  "Medien & Unterhaltung" \
   "<big><b>Medien &amp; Unterhaltung</b></big>\nAudio‑ und Video‑Wiedergabe." \
   vlc      "Spielt nahezu alle Audio‑ und Videoformate ab" \
   showtime "Einfacher Videoplayer mit klarer Oberfläche" \
@@ -162,7 +158,7 @@ MEDIA=$(choose_list \
 )
 
 AV=$(choose_list \
-  "Audio &amp; Video‑Bearbeitung" \
+  "Audio & Video‑Bearbeitung" \
   "<big><b>Audio &amp; Video‑Bearbeitung</b></big>\nWerkzeuge für kreative Medienproduktion." \
   shotcut  "Einfacher Videoeditor für schnelle Projekte" \
   kdenlive "Umfangreicher Videoeditor mit vielen Effekten" \
@@ -196,52 +192,6 @@ SYSTEM=$(choose_list \
   "<big><b>System‑Werkzeuge</b></big>\nHilfsprogramme für Konfiguration und Verwaltung." \
   flatseal "Verwaltung von Flatpak‑Berechtigungen" \
 )
-
-# ------------------------------------------------------------
-# Homebrew
-# ------------------------------------------------------------
-zenity --question \
-  --title="Homebrew (optional)" \
-  --text="<big><b>Homebrew installieren?</b></big>\n
-Zusätzlicher Paketmanager für Entwickler‑ und CLI‑Werkzeuge.\n
-• Installation im Benutzerverzeichnis\n
-• Keine Änderung am Basissystem\n
-• Komplett optional" \
-  || true
-USE_BREW=$([[ $? -eq 0 ]] && echo yes || echo no)
-
-# ------------------------------------------------------------
-# Auto‑Update
-# ------------------------------------------------------------
-zenity --question \
-  --title="Automatische Systemaktualisierung" \
-  --text="<big><b>Automatische Updates aktivieren?</b></big>\n
-Wöchentliche Prüfung und Installation von System‑Updates.\n
-<b>Manuell:</b>\n
-<tt>bootc upgrade</tt>" \
-  || true
-AUTO_UPDATE=$([[ $? -eq 0 ]] && echo yes || echo no)
-
-# ------------------------------------------------------------
-# Zusammenfassung
-# ------------------------------------------------------------
-SUMMARY="Browser: ${BROWSERS:-keine}
-Office: ${OFFICE:-keine}
-Grafik: ${GRAPHICS:-keine}
-Medien: ${MEDIA:-keine}
-Audio/Video: ${AV:-keine}
-Spiele: ${GAMES:-keine}
-E‑Mail: ${MAIL:-keine}
-Entwicklung: ${DEV:-keine}
-System: ${SYSTEM:-keine}
-
-Homebrew: $USE_BREW
-Automatische Updates: $AUTO_UPDATE"
-
-zenity --question \
-  --title="Zusammenfassung" \
-  --text="<big><b>Bitte bestätige die Installation</b></big>\n\n$SUMMARY" \
-  || abort
 
 # ------------------------------------------------------------
 # Installation
@@ -317,19 +267,12 @@ ensure_flathub
     [[ "$s" == flatseal ]] && flatpak install -y flathub com.github.tchx84.Flatseal
   done
 
-  [[ "$USE_BREW" == yes ]] && install_brew_and_setup_path
-
   echo "100"; echo "# Fertig."
 ) | zenity --progress \
     --title="Installation läuft" \
     --text="Bitte warten…" \
     --percentage=0 \
     --auto-close
-
-# ------------------------------------------------------------
-# Auto‑Update aktivieren
-# ------------------------------------------------------------
-[[ "$AUTO_UPDATE" == yes ]] && systemctl --user enable --now bootc-update.timer || true
 
 # ------------------------------------------------------------
 # Wizard done
@@ -342,6 +285,4 @@ zenity --info \
   --title="Fertig" \
   --text="<big><b>Die Einrichtung ist abgeschlossen.</b></big>\n
 Weitere Anwendungen kannst du jederzeit über den COSMIC‑Shop installieren.\n
-<b>Homebrew aktualisieren:</b>\n
-<tt>brew update &amp;&amp; brew upgrade</tt>\n
 Der Setup‑Assistent wird nicht erneut gestartet."
