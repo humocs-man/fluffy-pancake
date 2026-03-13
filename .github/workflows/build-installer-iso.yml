@@ -54,7 +54,7 @@ jobs:
             ghcr.io/humocs-man/fluffy-pancake:stable
 
       - name: Upload ISO artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: installer-iso
           path: output/**/*.iso
