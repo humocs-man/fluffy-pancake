@@ -31,7 +31,7 @@ ensure_flathub() {
 
 install_brew_and_setup_path() {
   if ! command -v brew >/dev/null 2>&1; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
   local BREW_PREFIX="/home/linuxbrew/.linuxbrew"
