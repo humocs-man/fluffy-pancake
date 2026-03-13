@@ -32,6 +32,7 @@ dnf5 install -y \
   qemu-img \
   virt-manager \
   virt-viewer \
+  zenity \
   usbredir
 echo "::endgroup::"
 
