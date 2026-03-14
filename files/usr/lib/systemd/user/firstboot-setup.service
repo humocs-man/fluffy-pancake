@@ -2,13 +2,11 @@
 Description=Run First Boot Setup Wizard
 After=graphical-session.target
 Wants=graphical-session.target
+ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
-Type=simple
+Type=exec
 ExecStart=%h/.config/firstboot/firstboot-setup.sh
-Environment=WAYLAND_DISPLAY=wayland-0
-Environment=DISPLAY=:0
-Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
