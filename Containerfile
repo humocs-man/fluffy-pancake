@@ -63,7 +63,6 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/10-build.sh
 
 COPY files/. /
-COPY files/. /
 
 RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
     chmod +x /usr/local/bin/install-homebrew.sh && \
