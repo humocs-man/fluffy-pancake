@@ -166,7 +166,8 @@ run_list GAMES \
   "Spiele" \
   "<big><b>Spiele‑Plattformen</b></big>\nPlattformen für PC‑Spiele." \
   steam  "Große Spielebibliothek und Community‑Funktionen" \
-  lutris "Zentrale Verwaltung von Spielen aus vielen Quellen"
+  lutris "Zentrale Verwaltung von Spielen aus vielen Quellen" \
+  sober "Spiele Roblox auf Linux"
 
 run_list MAIL \
   "E‑Mail" \
@@ -174,6 +175,14 @@ run_list MAIL \
   thunderbird "Leistungsstarker Mail‑Client mit Erweiterungen" \
   geary       "Schlanker Mail‑Client mit einfacher Bedienung" \
   evolution   "E‑Mail, Kalender und Kontakte in einer Anwendung"
+
+run_list KI \
+  "Anwendungen für lokale KI" \
+  "<big><b>KI-Anwenungen</b></big>\nProgramme für lokale KI-Anwendungen" \
+  alpaca "All-In-One-Anwendung für lokale Chat- und RAG-Nutzung" \
+  gpt4all "All-In-One-Anwendung von NomicAI"
+  
+
 
 run_list DEV \
   "Entwicklung" \
@@ -240,6 +249,7 @@ ensure_flathub
     case "$g" in
       steam)  flatpak install -y flathub com.valvesoftware.Steam ;;
       lutris) flatpak install -y flathub net.lutris.Lutris ;;
+      sober) flatpak install -y flathub org.vinegarhq.Sober ;;
     esac
   done
 
@@ -248,6 +258,13 @@ ensure_flathub
       thunderbird) flatpak install -y flathub org.mozilla.Thunderbird ;;
       geary)       flatpak install -y flathub org.gnome.Geary ;;
       evolution)   flatpak install -y flathub org.gnome.Evolution ;;
+    esac
+  done
+
+  for m in ${KI//|/ }; do
+    case "$m" in
+      alpaca) flatpak install -y flathub com.jeffser.Alpaca ;;
+      gpt4all) flatpak install -y flathub io.gpt4all.gpt4all ;;
     esac
   done
 
