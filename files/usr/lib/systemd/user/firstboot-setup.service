@@ -5,8 +5,10 @@ Wants=xdg-desktop-autostart.target
 ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
-Type=exec
+Type=simple
 ExecStart=%h/.config/firstboot/wait-and-run.sh
+PassEnvironment=DISPLAY WAYLAND_DISPLAY XDG_SESSION_TYPE
+
 
 [Install]
 WantedBy=xdg-desktop-autostart.target
