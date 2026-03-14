@@ -6,7 +6,7 @@ ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
 Type=exec
-ExecStart=%h/.config/firstboot/firstboot-setup.sh
+ExecStart=%h/.config/firstboot/wait-and-run.sh
 
 [Install]
 WantedBy=xdg-desktop-autostart.target
