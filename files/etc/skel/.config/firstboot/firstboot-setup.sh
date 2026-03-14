@@ -203,7 +203,7 @@ Er eignet sich besonders für Entwickler und fortgeschrittene Nutzer.\n
 Möchtest du Homebrew installieren?"
 then
   echo "Installiere Homebrew (non‑interactive)…"
-  systemctl start firstboot-brew-install@"USER".service
+  systemctl start firstboot-brew-install@"$USER".service
 else
   echo "Homebrew wird nicht installiert."
 fi
