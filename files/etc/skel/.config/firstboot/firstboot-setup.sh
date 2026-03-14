@@ -219,10 +219,20 @@ Empfohlen für die meisten Nutzer.\n
 Möchtest du automatische Updates aktivieren?"
 then
   echo "Aktiviere automatische Updates…"
-  systemctl enable --now bootc-update.timer
+
+  BOOTC_TIMER=$(systemctl list-unit-files \
+    | awk '/bootc-.*fetch.*apply.*updates.*\.timer/ {print $1; exit}')
+
+  if [ -n "$BOOTC_TIMER" ]; then
+      systemctl enable --now "$BOOTC_TIMER"
+  else
+      echo "Kein bootc Auto-Update Timer gefunden." >> /tmp/firstboot-debug.log
+  fi
+
 else
   echo "Automatische Updates bleiben deaktiviert."
 fi
+
 
 # ------------------------------------------------------------
 # Installation
@@ -244,7 +254,7 @@ ensure_flathub
     case "$o" in
       libreoffice) flatpak install -y flathub org.libreoffice.LibreOffice ;;
       onlyoffice)  flatpak install -y flathub org.onlyoffice.desktopeditors ;;
-      collabora)   flatpak install -y flathub com.collabora.CollaboraOffice ;;
+      collabora)   flatpak install -y flathub com.collabora.Office ;;
       papers)      flatpak install -y flathub org.gnome.Papers ;;
       simplescan)  flatpak install -y flathub org.gnome.SimpleScan ;;
     esac
