@@ -1,7 +1,7 @@
 [Unit]
 Description=Run First Boot Setup Wizard
-After=graphical-session.target
-Wants=graphical-session.target
+After=xdg-desktop-autostart.target
+Wants=xdg-desktop-autostart.target
 ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
@@ -9,4 +9,5 @@ Type=exec
 ExecStart=%h/.config/firstboot/firstboot-setup.sh
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=xdg-desktop-autostart.target
+
