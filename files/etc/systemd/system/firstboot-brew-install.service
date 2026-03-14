@@ -4,3 +4,6 @@ Description=Install Homebrew for user
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/install-homebrew.sh %i
+
+[Install]
+WantedBy=multi-user.target
