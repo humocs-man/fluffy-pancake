@@ -63,9 +63,14 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/10-build.sh
 
 COPY files/. /
+COPY files/. /
+
 RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
-    chmod +x /etc/skel/.config/firstboot/wait-and-run.sh && \
-    chmod +x /usr/local/bin/install-homebrew.sh 
+    chmod +x /usr/local/bin/install-homebrew.sh && \
+    mkdir -p /etc/skel/.config/systemd/user/graphical-session.target.wants && \
+    ln -s ../firstboot-setup.service \
+      /etc/skel/.config/systemd/user/graphical-session.target.wants/firstboot-setup.service
+
   
 
 ### LINTING
