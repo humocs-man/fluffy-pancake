@@ -1,15 +1,14 @@
 [Unit]
-Description=Run First Boot Setup Wizard
-After=xdg-desktop-autostart.target
-Wants=xdg-desktop-autostart.target
+Description=First Boot Wizard
+After=graphical-session.target cosmic-session.target
+Wants=graphical-session.target cosmic-session.target
+ConditionPathExists=%h/.config/cosmic-initial-setup.done
 ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
 Type=simple
-ExecStart=%h/.config/firstboot/wait-and-run.sh
-PassEnvironment=DISPLAY WAYLAND_DISPLAY XDG_SESSION_TYPE
-
+ExecStart=%h/.config/firstboot/firstboot-setup.sh
 
 [Install]
-WantedBy=xdg-desktop-autostart.target
+WantedBy=default.target
 
