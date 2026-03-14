@@ -10,5 +10,5 @@ Type=simple
 ExecStart=%h/.config/firstboot/firstboot-setup.sh
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
 
