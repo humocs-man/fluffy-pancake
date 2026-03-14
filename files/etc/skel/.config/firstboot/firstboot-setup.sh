@@ -14,35 +14,25 @@ if [[ -z "${WAYLAND_DISPLAY:-}" && -z "${DISPLAY:-}" ]]; then
 fi
 
 # ------------------------------------------------------------
-# Globaler Abbruch – beendet den Wizard vollständig
+# Abbruchdialog
+#   Ja   -> Wizard beenden
+#   Nein -> zurück zur aktuellen Liste (return 2)
 # ------------------------------------------------------------
 abort() {
-  echo "Abbruch durch Benutzer."
-
-  zenity --question \
+  if zenity --question \
     --title="Setup abbrechen?" \
     --text="<big><b>Setup abbrechen?</b></big>\n
 Der Einrichtungs‑Assistent wird dann nicht erneut angezeigt.\n
 Alle Anwendungen können jederzeit über den COSMIC‑Shop installiert oder entfernt werden.\n
-Möchtest du den Setup‑Assistenten wirklich abbrechen?" \
-    >/dev/null 2>&1 || true
-
-  rm -f "$HOME/.config/firstboot/run"
-  systemctl --user disable firstboot-setup.service >/dev/null 2>&1 || true
-  exit 1
-}
-
-# ------------------------------------------------------------
-# Cleanup bei Fehlern
-# ------------------------------------------------------------
-cleanup() {
-  local code=$?
-  if [[ $code -ne 0 ]]; then
+Möchtest du den Setup‑Assistenten wirklich abbrechen?"
+  then
     rm -f "$HOME/.config/firstboot/run"
     systemctl --user disable firstboot-setup.service >/dev/null 2>&1 || true
+    exit 1
+  else
+    return 2
   fi
 }
-trap cleanup EXIT
 
 # ------------------------------------------------------------
 # Helper
@@ -53,31 +43,10 @@ ensure_flathub() {
       https://dl.flathub.org/repo/flathub.flatpakrepo
 }
 
-install_brew_and_setup_path() {
-  if ! command -v brew >/dev/null 2>&1; then
-    NONINTERACTIVE=1 CI=1 /bin/bash -c \
-      "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-
-  local BREW_PREFIX="/home/linuxbrew/.linuxbrew"
-  local BREW_BIN="$BREW_PREFIX/bin/brew"
-  [[ -x "$BREW_BIN" ]] || BREW_BIN="$(command -v brew)"
-
-  eval "$("$BREW_BIN" shellenv)"
-
-  for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
-    [[ -f "$rc" ]] || continue
-    grep -q 'brew shellenv' "$rc" || {
-      echo "" >> "$rc"
-      echo "# Homebrew" >> "$rc"
-      echo "eval \"\$($BREW_BIN shellenv)\"" >> "$rc"
-    }
-  done
-}
-
 # ------------------------------------------------------------
 # Zenity‑Checkliste
-# Erwartet Paare: id "beschreibung"
+#   OK     -> stdout = Auswahl, return 0
+#   Cancel -> abort(); Nein => return 2
 # ------------------------------------------------------------
 choose_list() {
   local title="$1"
@@ -95,16 +64,24 @@ choose_list() {
     shift 2
   done
 
-  zenity --list \
-    --title="$title" \
-    --text="$text" \
-    --checklist \
-    --column="Auswahl" \
-    --column="Anwendung" \
-    --column="Beschreibung" \
-    --separator="|" \
-    "${rows[@]}" \
-  || abort
+  local result
+  if result=$(zenity --list \
+      --title="$title" \
+      --text="$text" \
+      --width=800 \
+      --height=600 \
+      --checklist \
+      --column="Auswahl" \
+      --column="Anwendung" \
+      --column="Beschreibung" \
+      --separator="|" \
+      "${rows[@]}"); then
+    printf '%s\n' "$result"
+    return 0
+  else
+    abort
+    return 2
+  fi
 }
 
 # ------------------------------------------------------------
@@ -121,77 +98,92 @@ Dieser Assistent hilft dir beim Einstieg in dein System.\n
   || abort
 
 # ------------------------------------------------------------
-# Auswahl
+# Auswahl-Runner
+#   return 0 -> weiter
+#   return 2 -> gleiche Liste erneut
 # ------------------------------------------------------------
-BROWSERS=$(choose_list \
+run_list() {
+  local varname="$1"
+  shift
+
+  while true; do
+    local result
+    if result=$(choose_list "$@"); then
+      printf -v "$varname" "%s" "$result"
+      break
+    else
+      local code=$?
+      if [[ $code -eq 2 ]]; then
+        continue
+      fi
+      exit 1
+    fi
+  done
+}
+
+# ------------------------------------------------------------
+# Listen
+# ------------------------------------------------------------
+run_list BROWSERS \
   "Browser" \
   "<big><b>Browser auswählen</b></big>\nWähle einen oder mehrere Webbrowser aus." \
   firefox  "Ausgewogen, weit verbreitet, guter Datenschutz" \
   chromium "Schlank, schnell, Open‑Source‑Basis vieler Browser" \
-  brave    "Starker Fokus auf Datenschutz und Werbeblockierung" \
-)
+  brave    "Starker Fokus auf Datenschutz und Werbeblockierung"
 
-OFFICE=$(choose_list \
+run_list OFFICE \
   "Office & Dokumente" \
   "<big><b>Office &amp; Dokumente</b></big>\nAnwendungen für Büroarbeit und PDFs." \
   libreoffice "Umfangreiche Office‑Suite für lokale Dokumente" \
   onlyoffice  "Moderne Oberfläche, hohe MS‑Office‑Kompatibilität" \
   collabora   "LibreOffice‑Technologie mit Fokus auf Zusammenarbeit" \
   papers      "Leichter PDF‑Viewer zum Lesen und Kommentieren" \
-  simplescan  "Einfaches Scannen von Dokumenten und Bildern" \
-)
+  simplescan  "Einfaches Scannen von Dokumenten und Bildern"
 
-GRAPHICS=$(choose_list \
+run_list GRAPHICS \
   "Grafik & Kreativ" \
   "<big><b>Grafik &amp; Kreativ</b></big>\nWerkzeuge für Bildbearbeitung und Illustration." \
   gimp     "Leistungsstarke Bildbearbeitung für Fotos" \
   krita    "Digitale Malerei und Illustration" \
-  inkscape "Vektorgrafiken für Logos und Icons" \
-)
+  inkscape "Vektorgrafiken für Logos und Icons"
 
-MEDIA=$(choose_list \
+run_list MEDIA \
   "Medien & Unterhaltung" \
   "<big><b>Medien &amp; Unterhaltung</b></big>\nAudio‑ und Video‑Wiedergabe." \
   vlc      "Spielt nahezu alle Audio‑ und Videoformate ab" \
   showtime "Einfacher Videoplayer mit klarer Oberfläche" \
-  spotify  "Streaming‑Dienst für Musik und Podcasts" \
-)
+  spotify  "Streaming‑Dienst für Musik und Podcasts"
 
-AV=$(choose_list \
+run_list AV \
   "Audio & Video‑Bearbeitung" \
   "<big><b>Audio &amp; Video‑Bearbeitung</b></big>\nWerkzeuge für kreative Medienproduktion." \
   shotcut  "Einfacher Videoeditor für schnelle Projekte" \
   kdenlive "Umfangreicher Videoeditor mit vielen Effekten" \
   audacity "Aufnahme und Bearbeitung von Audio" \
-  ardour   "Professionelle Audio‑Produktion" \
-)
+  ardour   "Professionelle Audio‑Produktion"
 
-GAMES=$(choose_list \
+run_list GAMES \
   "Spiele" \
   "<big><b>Spiele‑Plattformen</b></big>\nPlattformen für PC‑Spiele." \
   steam  "Große Spielebibliothek und Community‑Funktionen" \
-  lutris "Zentrale Verwaltung von Spielen aus vielen Quellen" \
-)
+  lutris "Zentrale Verwaltung von Spielen aus vielen Quellen"
 
-MAIL=$(choose_list \
+run_list MAIL \
   "E‑Mail" \
   "<big><b>E‑Mail‑Programme</b></big>\nDesktop‑Clients für E‑Mail und Kalender." \
   thunderbird "Leistungsstarker Mail‑Client mit Erweiterungen" \
   geary       "Schlanker Mail‑Client mit einfacher Bedienung" \
-  evolution   "E‑Mail, Kalender und Kontakte in einer Anwendung" \
-)
+  evolution   "E‑Mail, Kalender und Kontakte in einer Anwendung"
 
-DEV=$(choose_list \
+run_list DEV \
   "Entwicklung" \
   "<big><b>Entwicklung</b></big>\nWerkzeuge für Software‑Entwicklung." \
-  vscode "Beliebter Code‑Editor mit vielen Erweiterungen" \
-)
+  vscode "Beliebter Code‑Editor mit vielen Erweiterungen"
 
-SYSTEM=$(choose_list \
+run_list SYSTEM \
   "System‑Werkzeuge" \
   "<big><b>System‑Werkzeuge</b></big>\nHilfsprogramme für Konfiguration und Verwaltung." \
-  flatseal "Verwaltung von Flatpak‑Berechtigungen" \
-)
+  flatseal "Verwaltung von Flatpak‑Berechtigungen"
 
 # ------------------------------------------------------------
 # Installation
@@ -277,7 +269,6 @@ ensure_flathub
 # ------------------------------------------------------------
 # Wizard done
 # ------------------------------------------------------------
-trap - EXIT
 rm -f "$HOME/.config/firstboot/run"
 systemctl --user disable firstboot-setup.service >/dev/null 2>&1 || true
 
