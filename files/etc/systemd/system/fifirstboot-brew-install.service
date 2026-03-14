@@ -1,0 +1,6 @@
+[Unit]
+Description=Install Homebrew for user
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/install-homebrew.sh
