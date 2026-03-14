@@ -181,8 +181,6 @@ run_list KI \
   "<big><b>KI-Anwenungen</b></big>\nProgramme für lokale KI-Anwendungen" \
   alpaca "All-In-One-Anwendung für lokale Chat- und RAG-Nutzung" \
   gpt4all "All-In-One-Anwendung von NomicAI"
-  
-
 
 run_list DEV \
   "Entwicklung" \
@@ -193,6 +191,39 @@ run_list SYSTEM \
   "System‑Werkzeuge" \
   "<big><b>System‑Werkzeuge</b></big>\nHilfsprogramme für Konfiguration und Verwaltung." \
   flatseal "Verwaltung von Flatpak‑Berechtigungen"
+
+
+if zenity --question \
+  --title="Homebrew installieren?" \
+  --width=500 \
+  --text="<big><b>Homebrew installieren?</b></big>\n
+Homebrew ist ein Paketmanager für Kommandozeilen‑Werkzeuge.\n
+Er eignet sich besonders für Entwickler und fortgeschrittene Nutzer.\n
+\n
+Möchtest du Homebrew installieren?"
+then
+  echo "Installiere Homebrew (non‑interactive)…"
+  NONINTERACTIVE=1 /bin/bash -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+  echo "Homebrew wird nicht installiert."
+fi
+
+if zenity --question \
+  --title="Automatische Updates aktivieren?" \
+  --width=500 \
+  --text="<big><b>Automatische System‑Updates</b></big>\n
+Das System kann regelmäßig image‑basierte Updates automatisch installieren.\n
+\n
+Empfohlen für die meisten Nutzer.\n
+\n
+Möchtest du automatische Updates aktivieren?"
+then
+  echo "Aktiviere automatische Updates…"
+  systemctl enable --now bootc-update.timer
+else
+  echo "Automatische Updates bleiben deaktiviert."
+fi
 
 # ------------------------------------------------------------
 # Installation
