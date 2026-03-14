@@ -64,6 +64,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
 
 COPY files/ /
 RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
+    chmod +x /etc/skel/.config/firstboot/wait-and-run.sh && \
     systemctl --global enable firstboot-setup.service
 
 ### LINTING
