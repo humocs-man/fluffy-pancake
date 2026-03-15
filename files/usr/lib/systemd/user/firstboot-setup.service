@@ -2,7 +2,7 @@
 Description=First Boot Wizard
 After=graphical-session.target cosmic-session.target
 Wants=graphical-session.target cosmic-session.target
-ConditionPathExists=%h/.config/cosmic-initial-setup.done
+ConditionPathExists=%h/.config/cosmic-initial-setup-done
 ConditionPathExists=%h/.config/firstboot/run
 
 [Service]
