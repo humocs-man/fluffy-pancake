@@ -47,18 +47,19 @@ flatpak_user_install() {
   local remote="$1"
   local app="$2"
 
-  # Sicherstellen, dass Flatpak als User installiert
   export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 
-  # Bereits als User-Flatpak installiert?
   if flatpak info --user "$app" >/dev/null 2>&1; then
     echo "Flatpak (user) bereits installiert: $app"
     return 0
   fi
 
   echo "Installiere Flatpak (user): $app"
-  flatpak install --user -y "$remote" "$app" || true
+  if ! flatpak install --user -y "$remote" "$app"; then
+    echo "WARNUNG: Flatpak-Installation fehlgeschlagen: $app"
+  fi
 }
+
 
 # ------------------------------------------------------------
 # Zenity‑Checkliste
