@@ -66,9 +66,8 @@ COPY files/. /
 
 RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
     chmod +x /usr/local/bin/install-homebrew.sh && \
-    mkdir -p /etc/skel/.config/systemd/user/graphical-session.target.wants && \
-    ln -s ../firstboot-setup.service \
-      /etc/skel/.config/systemd/user/graphical-session.target.wants/firstboot-setup.service
+    systemctl --global enable firstboot-setup.path && \
+    systemctl --global enable firstboot-setup.service
 
   
 
