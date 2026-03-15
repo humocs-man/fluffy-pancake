@@ -223,6 +223,7 @@ Möchtest du Homebrew installieren?"
 then
   echo "Installiere Homebrew (non‑interactive)…"
   systemctl start firstboot-brew-install@"$USER".service &
+  cosmic-term --bash -c "journalctl -fu firstboot-brew-install@$USER.service" &
 else
   echo "Homebrew wird nicht installiert."
 fi
