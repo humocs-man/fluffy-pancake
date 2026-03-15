@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ -z "${1:-}" ]]; then
-  echo "Kein Benutzer angegeben – breche ab." >&2
-  exit 1
-fi
-
 USER="$1"
+HOME="/var/home/$USER"
+export HOME
+export NONINTERACTIVE=1
 
-# Brew bereits vorhanden?
-if sudo -u "$USER" command -v brew >/dev/null 2>&1; then
-  echo "Homebrew ist bereits installiert – überspringe."
-  exit 0
+
+# Homebrew installieren (als User, aber ohne Interaktion)
+sudo -u "$USER" HOME="$HOME" NONINTERACTIVE=1 bash -c \
+  '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+
+# Optional: Brew in PATH eintragen
+if ! grep -q 'linuxbrew' "$HOME/.bashrc"; then
+  echo 'eval "$(/var/home/'"$USER"'/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.bashrc"
 fi
-
-echo "Installiere Homebrew für Benutzer: $USER"
-
-sudo -u "$USER" NONINTERACTIVE=1 \
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
