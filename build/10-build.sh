@@ -47,6 +47,13 @@ systemctl enable bluetooth.service
 systemctl enable libvirtd.service
 systemctl enable virtlogd.service
 
+# Flathub aktivieren
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
+# Appstream-Datenbank vorab generieren
+flatpak update --appstream -y && \
+# Flatpak-Datenbank initialisieren
+flatpak list || true
+
 echo "::endgroup::"
 
 shopt -u nullglob
