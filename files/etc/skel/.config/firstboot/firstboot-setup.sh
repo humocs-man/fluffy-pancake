@@ -43,6 +43,23 @@ ensure_flathub() {
       https://dl.flathub.org/repo/flathub.flatpakrepo
 }
 
+flatpak_user_install() {
+  local remote="$1"
+  local app="$2"
+
+  # Sicherstellen, dass Flatpak als User installiert
+  export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+
+  # Bereits als User-Flatpak installiert?
+  if flatpak info --user "$app" >/dev/null 2>&1; then
+    echo "Flatpak (user) bereits installiert: $app"
+    return 0
+  fi
+
+  echo "Installiere Flatpak (user): $app"
+  flatpak install --user -y "$remote" "$app" || true
+}
+
 # ------------------------------------------------------------
 # Zenity‑Checkliste
 #   OK     -> stdout = Auswahl, return 0
@@ -246,76 +263,76 @@ ensure_flathub
 
   for b in ${BROWSERS//|/ }; do
     case "$b" in
-      firefox)  flatpak install -y flathub org.mozilla.firefox ;;
-      chromium) flatpak install -y flathub org.chromium.Chromium ;;
-      brave)    flatpak install -y flathub com.brave.Browser ;;
+      firefox)  flatpak_user_install flathub org.mozilla.firefox ;;
+      chromium) flatpak_user_install flathub org.chromium.Chromium ;;
+      brave)    flatpak_user_install flathub com.brave.Browser ;;
     esac
   done
 
   for o in ${OFFICE//|/ }; do
     case "$o" in
-      libreoffice) flatpak install -y flathub org.libreoffice.LibreOffice ;;
-      onlyoffice)  flatpak install -y flathub org.onlyoffice.desktopeditors ;;
-      collabora)   flatpak install -y flathub com.collabora.Office ;;
-      papers)      flatpak install -y flathub org.gnome.Papers ;;
-      simplescan)  flatpak install -y flathub org.gnome.SimpleScan ;;
+      libreoffice) flatpak_user_install flathub org.libreoffice.LibreOffice ;;
+      onlyoffice)  flatpak_user_install flathub org.onlyoffice.desktopeditors ;;
+      collabora)   flatpak_user_install flathub com.collabora.Office ;;
+      papers)      flatpak_user_install flathub org.gnome.Papers ;;
+      simplescan)  flatpak_user_install flathub org.gnome.SimpleScan ;;
     esac
   done
 
   for g in ${GRAPHICS//|/ }; do
     case "$g" in
-      gimp)     flatpak install -y flathub org.gimp.GIMP ;;
-      krita)    flatpak install -y flathub org.kde.krita ;;
-      inkscape) flatpak install -y flathub org.inkscape.Inkscape ;;
+      gimp)     flatpak_user_install flathub org.gimp.GIMP ;;
+      krita)    flatpak_user_install flathub org.kde.krita ;;
+      inkscape) flatpak_user_install flathub org.inkscape.Inkscape ;;
     esac
   done
 
   for m in ${MEDIA//|/ }; do
     case "$m" in
-      vlc)      flatpak install -y flathub org.videolan.VLC ;;
-      showtime) flatpak install -y flathub org.gnome.Showtime ;;
-      spotify)  flatpak install -y flathub com.spotify.Client ;;
+      vlc)      flatpak_user_install flathub org.videolan.VLC ;;
+      showtime) flatpak_user_install flathub org.gnome.Showtime ;;
+      spotify)  flatpak_user_install flathub com.spotify.Client ;;
     esac
   done
 
   for a in ${AV//|/ }; do
     case "$a" in
-      shotcut)  flatpak install -y flathub org.shotcut.Shotcut ;;
-      kdenlive) flatpak install -y flathub org.kde.kdenlive ;;
-      audacity) flatpak install -y flathub org.audacityteam.Audacity ;;
-      ardour)   flatpak install -y flathub org.ardour.Ardour ;;
+      shotcut)  flatpak_user_install flathub org.shotcut.Shotcut ;;
+      kdenlive) flatpak_user_install flathub org.kde.kdenlive ;;
+      audacity) flatpak_user_install flathub org.audacityteam.Audacity ;;
+      ardour)   flatpak_user_install flathub org.ardour.Ardour ;;
     esac
   done
 
   for g in ${GAMES//|/ }; do
     case "$g" in
-      steam)  flatpak install -y flathub com.valvesoftware.Steam ;;
-      lutris) flatpak install -y flathub net.lutris.Lutris ;;
-      sober) flatpak install -y flathub org.vinegarhq.Sober ;;
+      steam)  flatpak_user_install flathub com.valvesoftware.Steam ;;
+      lutris) flatpak_user_install flathub net.lutris.Lutris ;;
+      sober)  flatpak_user_install flathub org.vinegarhq.Sober ;;
     esac
   done
 
   for m in ${MAIL//|/ }; do
     case "$m" in
-      thunderbird) flatpak install -y flathub org.mozilla.Thunderbird ;;
-      geary)       flatpak install -y flathub org.gnome.Geary ;;
-      evolution)   flatpak install -y flathub org.gnome.Evolution ;;
+      thunderbird) flatpak_user_install flathub org.mozilla.Thunderbird ;;
+      geary)       flatpak_user_install flathub org.gnome.Geary ;;
+      evolution)   flatpak_user_install flathub org.gnome.Evolution ;;
     esac
   done
 
   for m in ${KI//|/ }; do
     case "$m" in
-      alpaca) flatpak install -y flathub com.jeffser.Alpaca ;;
-      gpt4all) flatpak install -y flathub io.gpt4all.gpt4all ;;
+      alpaca)  flatpak_user_install flathub com.jeffser.Alpaca ;;
+      gpt4all) flatpak_user_install flathub io.gpt4all.gpt4all ;;
     esac
   done
 
   for d in ${DEV//|/ }; do
-    [[ "$d" == vscode ]] && flatpak install -y flathub com.visualstudio.code
+    [[ "$d" == vscode ]] && flatpak_user_install flathub com.visualstudio.code
   done
 
   for s in ${SYSTEM//|/ }; do
-    [[ "$s" == flatseal ]] && flatpak install -y flathub com.github.tchx84.Flatseal
+    [[ "$s" == flatseal ]] && flatpak_user_install flathub com.github.tchx84.Flatseal
   done
 
   echo "100"; echo "# Fertig."
