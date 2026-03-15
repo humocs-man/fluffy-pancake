@@ -1,9 +1,12 @@
 [Unit]
-Description=Install Homebrew for user
+Description=Install Homebrew for user %i
+After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/install-homebrew.sh %i
+User=root
+ExecStart=/usr/local/sbin/install-homebrew.sh %i
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
