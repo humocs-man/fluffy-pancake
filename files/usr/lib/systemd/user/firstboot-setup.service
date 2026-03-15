@@ -1,9 +1,18 @@
 [Unit]
 Description=First Boot Wizard
 ConditionPathExists=%h/.config/firstboot/run
+After=graphical-session.target
+Wants=graphical-session.target
 
 [Service]
 Type=simple
+
+# Kleiner Puffer für VMs, auf echter Hardware praktisch irrelevant
+ExecStartPre=/usr/bin/sleep 2
+
+# Verhindert MESA/ZINK-Fehler in VMs, auf echter Hardware unkritisch
+Environment=LIBGL_ALWAYS_SOFTWARE=1
+
 ExecStart=%h/.config/firstboot/firstboot-setup.sh
 
 [Install]
