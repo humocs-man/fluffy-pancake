@@ -1,0 +1,9 @@
+[Unit]
+Description=Start First Boot Wizard when COSMIC setup is done
+
+[Path]
+# COSMIC schreibt diese Datei, wenn der Setup abgeschlossen ist
+PathExists=%h/.config/cosmic-initial-setup-done
+
+[Install]
+WantedBy=default.target
