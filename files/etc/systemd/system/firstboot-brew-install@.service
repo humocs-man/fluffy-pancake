@@ -5,10 +5,9 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=root
-ExecStart=/usr/local/sbin/install-homebrew.sh %i
+User=%i
+ExecStart=/usr/local/bin/install-homebrew.sh
 RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
-
