@@ -60,7 +60,6 @@ flatpak_user_install() {
   fi
 }
 
-
 # ------------------------------------------------------------
 # Zenity‑Checkliste
 #   OK     -> stdout = Auswahl, return 0
@@ -104,7 +103,6 @@ choose_list() {
   fi
 }
 
-
 # ------------------------------------------------------------
 # Welcome
 # ------------------------------------------------------------
@@ -140,18 +138,17 @@ run_list() {
   done
 }
 
-
 # ------------------------------------------------------------
 # Listen
 # ------------------------------------------------------------
-run_list BROWSERS \
+run_list BROWSERS_LIST \
   "Browser" \
   "<big><b>Browser auswählen</b></big>\nWähle einen oder mehrere Webbrowser aus." \
   firefox  "Ausgewogen, weit verbreitet, guter Datenschutz" \
   chromium "Schlank, schnell, Open‑Source‑Basis vieler Browser" \
   brave    "Starker Fokus auf Datenschutz und Werbeblockierung"
 
-run_list OFFICE \
+run_list OFFICE_LIST \
   "Office & Dokumente" \
   "<big><b>Office &amp; Dokumente</b></big>\nAnwendungen für Büroarbeit und PDFs." \
   libreoffice "Umfangreiche Office‑Suite für lokale Dokumente" \
@@ -160,21 +157,21 @@ run_list OFFICE \
   papers      "Leichter PDF‑Viewer zum Lesen und Kommentieren" \
   simplescan  "Einfaches Scannen von Dokumenten und Bildern"
 
-run_list GRAPHICS \
+run_list GRAPHICS_LIST \
   "Grafik & Kreativ" \
   "<big><b>Grafik &amp; Kreativ</b></big>\nWerkzeuge für Bildbearbeitung und Illustration." \
   gimp     "Leistungsstarke Bildbearbeitung für Fotos" \
   krita    "Digitale Malerei und Illustration" \
   inkscape "Vektorgrafiken für Logos und Icons"
 
-run_list MEDIA \
+run_list MEDIA_LIST \
   "Medien & Unterhaltung" \
   "<big><b>Medien &amp; Unterhaltung</b></big>\nAudio‑ und Video‑Wiedergabe." \
   vlc      "Spielt nahezu alle Audio‑ und Videoformate ab" \
   showtime "Einfacher Videoplayer mit klarer Oberfläche" \
   spotify  "Streaming‑Dienst für Musik und Podcasts"
 
-run_list AV \
+run_list AV_LIST \
   "Audio & Video‑Bearbeitung" \
   "<big><b>Audio &amp; Video‑Bearbeitung</b></big>\nWerkzeuge für kreative Medienproduktion." \
   shotcut  "Einfacher Videoeditor für schnelle Projekte" \
@@ -182,36 +179,35 @@ run_list AV \
   audacity "Aufnahme und Bearbeitung von Audio" \
   ardour   "Professionelle Audio‑Produktion"
 
-run_list GAMES \
+run_list GAMES_LIST \
   "Spiele" \
   "<big><b>Spiele‑Plattformen</b></big>\nPlattformen für PC‑Spiele." \
   steam  "Große Spielebibliothek und Community‑Funktionen" \
   lutris "Zentrale Verwaltung von Spielen aus vielen Quellen" \
   sober "Spiele Roblox auf Linux"
 
-run_list MAIL \
+run_list MAIL_LIST \
   "E‑Mail" \
   "<big><b>E‑Mail‑Programme</b></big>\nDesktop‑Clients für E‑Mail und Kalender." \
   thunderbird "Leistungsstarker Mail‑Client mit Erweiterungen" \
   geary       "Schlanker Mail‑Client mit einfacher Bedienung" \
   evolution   "E‑Mail, Kalender und Kontakte in einer Anwendung"
 
-run_list KI \
+run_list KI_LIST \
   "Anwendungen für lokale KI" \
   "<big><b>KI-Anwenungen</b></big>\nProgramme für lokale KI-Anwendungen" \
   alpaca "All-In-One-Anwendung für lokale Chat- und RAG-Nutzung" \
   gpt4all "All-In-One-Anwendung von NomicAI"
 
-run_list DEV \
+run_list DEV_LIST \
   "Entwicklung" \
   "<big><b>Entwicklung</b></big>\nWerkzeuge für Software‑Entwicklung." \
   vscode "Beliebter Code‑Editor mit vielen Erweiterungen"
 
-run_list SYSTEM \
+run_list SYSTEM_LIST \
   "System‑Werkzeuge" \
   "<big><b>System‑Werkzeuge</b></big>\nHilfsprogramme für Konfiguration und Verwaltung." \
   flatseal "Verwaltung von Flatpak‑Berechtigungen"
-
 
 if zenity --question \
   --title="Homebrew installieren?" \
@@ -254,7 +250,6 @@ else
   echo "Automatische Updates bleiben deaktiviert."
 fi
 
-
 # ------------------------------------------------------------
 # Installation
 # ------------------------------------------------------------
@@ -263,7 +258,7 @@ ensure_flathub
 (
   echo "10"; echo "# Installiere Anwendungen…"
 
-  for b in ${BROWSERS//|/ }; do
+  for b in ${BROWSERS_LIST//|/ }; do
     case "$b" in
       firefox)  flatpak_user_install flathub org.mozilla.firefox ;;
       chromium) flatpak_user_install flathub org.chromium.Chromium ;;
@@ -271,7 +266,7 @@ ensure_flathub
     esac
   done
 
-  for o in ${OFFICE//|/ }; do
+  for o in ${OFFICE_LIST//|/ }; do
     case "$o" in
       libreoffice) flatpak_user_install flathub org.libreoffice.LibreOffice ;;
       onlyoffice)  flatpak_user_install flathub org.onlyoffice.desktopeditors ;;
@@ -281,7 +276,7 @@ ensure_flathub
     esac
   done
 
-  for g in ${GRAPHICS//|/ }; do
+  for g in ${GRAPHICS_LIST//|/ }; do
     case "$g" in
       gimp)     flatpak_user_install flathub org.gimp.GIMP ;;
       krita)    flatpak_user_install flathub org.kde.krita ;;
@@ -289,7 +284,7 @@ ensure_flathub
     esac
   done
 
-  for m in ${MEDIA//|/ }; do
+  for m in ${MEDIA_LIST//|/ }; do
     case "$m" in
       vlc)      flatpak_user_install flathub org.videolan.VLC ;;
       showtime) flatpak_user_install flathub org.gnome.Showtime ;;
@@ -297,7 +292,7 @@ ensure_flathub
     esac
   done
 
-  for a in ${AV//|/ }; do
+  for a in ${AV_LIST//|/ }; do
     case "$a" in
       shotcut)  flatpak_user_install flathub org.shotcut.Shotcut ;;
       kdenlive) flatpak_user_install flathub org.kde.kdenlive ;;
@@ -306,7 +301,7 @@ ensure_flathub
     esac
   done
 
-  for g in ${GAMES//|/ }; do
+  for g in ${GAMES_LIST//|/ }; do
     case "$g" in
       steam)  flatpak_user_install flathub com.valvesoftware.Steam ;;
       lutris) flatpak_user_install flathub net.lutris.Lutris ;;
@@ -314,7 +309,7 @@ ensure_flathub
     esac
   done
 
-  for m in ${MAIL//|/ }; do
+  for m in ${MAIL_LIST//|/ }; do
     case "$m" in
       thunderbird) flatpak_user_install flathub org.mozilla.Thunderbird ;;
       geary)       flatpak_user_install flathub org.gnome.Geary ;;
@@ -322,18 +317,18 @@ ensure_flathub
     esac
   done
 
-  for m in ${KI//|/ }; do
+  for m in ${KI_LIST//|/ }; do
     case "$m" in
       alpaca)  flatpak_user_install flathub com.jeffser.Alpaca ;;
       gpt4all) flatpak_user_install flathub io.gpt4all.gpt4all ;;
     esac
   done
 
-  for d in ${DEV//|/ }; do
+  for d in ${DEV_LIST//|/ }; do
     [[ "$d" == vscode ]] && flatpak_user_install flathub com.visualstudio.code
   done
 
-  for s in ${SYSTEM//|/ }; do
+  for s in ${SYSTEM_LIST//|/ }; do
     [[ "$s" == flatseal ]] && flatpak_user_install flathub com.github.tchx84.Flatseal
   done
 
