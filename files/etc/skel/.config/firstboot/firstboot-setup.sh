@@ -6,41 +6,67 @@ mkdir -p "$(dirname "$LOG")"
 exec > >(tee -a "$LOG") 2>&1
 
 # ------------------------------------------------------------
-# Session check
+# WICHTIG: Dynamisches Warten auf Flatpak-Bereitschaft
 # ------------------------------------------------------------
-if [[ -z "${WAYLAND_DISPLAY:-}" && -z "${DISPLAY:-}" ]]; then
-  echo "Keine grafische Session verfügbar – breche ab."
+echo "=== Initialisiere User-Session und Flatpak ===" >&2
+
+MAX_WAIT=60
+WAITED=0
+
+while [[ $WAITED -lt $MAX_WAIT ]]; do
+  if systemctl --user is-active >/dev/null 2>&1; then
+    if flatpak --version >/dev/null 2>&1; then
+      echo "✓ Flatpak ist nach $WAITED Sekunden bereit." >&2
+      break
+    fi
+    
+    echo "$(date +%T.%N) - Flatpak nicht verfügbar, starte Dienst..." >&2
+    systemctl --user start org.freedesktop.Flatpak.service 2>&1 || true
+    sleep 3
+  fi
+  
+  ((WAITED++)) || true
+  sleep 1
+  
+  if [[ $((MAX_WAIT - WAITED)) -le 5 ]]; then
+    echo "⚠️  Wartezeit läuft kurz ($WAITED/$MAX_WAIT)..." >&2
+  fi
+done
+
+if [[ $WAITED -ge $MAX_WAIT ]]; then
+  echo "❌ FATAL: Flatpak konnte nicht innerhalb von $MAX_WAIT Sekunden initialisiert werden!" >&2
   exit 1
 fi
 
 # ------------------------------------------------------------
-# Abbruchdialog
-#   Ja   -> Wizard beenden
-#   Nein -> zurück zur aktuellen Liste (return 2)
+# XDG-Umgebung sicherstellen
 # ------------------------------------------------------------
-abort() {
-  if zenity --question \
-    --title="Setup abbrechen?" \
-    --text="<big><b>Setup abbrechen?</b></big>\n
-Der Einrichtungs‑Assistent wird dann nicht erneut angezeigt.\n
-Alle Anwendungen können jederzeit über den COSMIC‑Shop installiert oder entfernt werden.\n
-Möchtest du den Setup‑Assistenten wirklich abbrechen?"
-  then
-    rm -f "$HOME/.config/firstboot/run"
-    systemctl --user disable firstboot-setup.service >/dev/null 2>&1 || true
-    exit 1
-  else
-    return 2
-  fi
-}
+export HOME="$HOME"
+export USER=$(whoami)
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+mkdir -p "$XDG_DATA_HOME"
+mkdir -p "$(dirname "$LOG")"
+
+echo "✓ XDG-Umgebung konfiguriert: XDG_DATA_HOME=$XDG_DATA_HOME" >&2
+
 
 # ------------------------------------------------------------
-# Helper
+# Helper-Funktionen mit besserer Fehlerbehandlung
 # ------------------------------------------------------------
 ensure_flathub() {
-  flatpak remote-list --columns=name 2>/dev/null | grep -qx flathub || \
+  if ! flatpak remote-list --columns=name 2>/dev/null | grep -qx flathub; then
+    echo "Aktiviere Flathub..." >&2
     flatpak remote-add --if-not-exists flathub \
-      https://dl.flathub.org/repo/flathub.flatpakrepo
+      https://dl.flathub.org/repo/flathub.flatapkrepo || {
+        echo "❌ FATAL: Konnte Flathub nicht aktivieren!" >&2
+        exit 1
+      }
+  fi
+  
+  # Warte kurz, bis das Repository geladen ist (wichtig!)
+  sleep 5
 }
 
 flatpak_user_install() {
@@ -54,11 +80,24 @@ flatpak_user_install() {
     return 0
   fi
 
-  echo "Installiere Flatpak (user): $app"
+  echo "Installiere Flatpak (user): $app" >&2
+  
+  # Füge Fehlerbehandlung hinzu
   if ! flatpak install --user -y "$remote" "$app"; then
-    echo "WARNUNG: Flatpak-Installation fehlgeschlagen: $app"
+    echo "❌ FATAL: Flatpak-Installation fehlgeschlagen: $app" >&2
+    
+    # Versuche, das Problem zu diagnostizieren
+    echo "Diagnose..." >&2
+    flatpak search "$app" || true
+    exit 1 
   fi
+  
+  echo "✓ Installation erfolgreich: $app" >&2
 }
+
+# ------------------------------------------------------------
+# Rest des Skripts (wie zuvor) ...
+
 
 # ------------------------------------------------------------
 # Zenity‑Checkliste
