@@ -20,9 +20,11 @@ dnf5 install -y \
 ###############################################################################
 
 # Replace Fedora Mesa with freeworld variants
-dnf5 swap -y \
-  mesa-va-drivers mesa-va-drivers-freeworld \
-  mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
+dnf5 install -y \
+  mesa-va-drivers-freeworld \
+  mesa-vdpau-drivers-freeworld \
+  --allowerasing
+
 
 # Install full multimedia group (RPM Fusion maintained)
 dnf5 group install -y multimedia \
