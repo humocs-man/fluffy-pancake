@@ -38,7 +38,8 @@ dnf5 install -y \
   libavcodec-freeworld \
   gstreamer1-libav \
   gstreamer1-plugins-bad-freeworld \
-  gstreamer1-plugins-ugly
+  gstreamer1-plugins-ugly \
+  --allowerasing
 
 ###############################################################################
 # Virtualization stack (desktop-focused, minimal)
