@@ -1,61 +1,88 @@
 #!/usr/bin/bash
-
 set -eoux pipefail
 
 ###############################################################################
-# Main Build Script
+# Fedora version (used for RPM Fusion)
 ###############################################################################
 
-# Source helper functions
-# shellcheck source=/dev/null
-source /ctx/build/copr-helpers.sh
+FEDORA_VERSION="$(rpm -E %fedora)"
 
-# Enable nullglob for all glob operations to prevent failures on empty matches
-shopt -s nullglob
+###############################################################################
+# Enable RPM Fusion (free + nonfree)
+###############################################################################
 
-dnf5 remove -y \
-nvtop \
-htop
-
-echo "::group:: Install Packages"
-# flatpak und just sind im base-main vorhanden, aber wir ergänzen deine Tools
 dnf5 install -y \
-  fastfetch \
-  btop \
-  libvirt \
+  https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm \
+  https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VERSION}.noarch.rpm
+
+###############################################################################
+# Multimedia stack (Mesa freeworld + codecs)
+###############################################################################
+
+# Replace Fedora Mesa with freeworld variants
+dnf5 swap -y \
+  mesa-va-drivers mesa-va-drivers-freeworld \
+  mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
+
+# Install full multimedia group (RPM Fusion maintained)
+dnf5 group install -y multimedia \
+  --with-optional \
+  --allowerasing
+
+# Explicit codec safety net
+dnf5 install -y \
+  ffmpeg \
+  ffmpeg-libs \
+  libavcodec-freeworld \
+  gstreamer1-libav \
+  gstreamer1-plugins-bad-freeworld \
+  gstreamer1-plugins-ugly
+
+###############################################################################
+# Virtualization stack (desktop-focused, minimal)
+###############################################################################
+
+dnf5 install -y \
   libvirt-daemon \
   libvirt-daemon-driver-qemu \
   libvirt-daemon-config-network \
-  libvirt-daemon-kvm \
   libvirt-client \
   qemu-kvm \
   qemu-img \
   virt-manager \
-  virt-viewer \
-  zenity \
-  usbredir
-echo "::endgroup::"
+  virt-viewer
 
-echo "::group:: Installing COSMIC"
-copr_install_isolated "ryanabx/cosmic-epoch" \
-  cosmic-desktop
-echo "::endgroup::"
+###############################################################################
+# Steam (RPM Fusion nonfree)
+###############################################################################
 
-echo "::group:: System Configuration"
-systemctl enable podman.socket
-systemctl enable bluetooth.service
+dnf5 install -y \
+  steam \
+  mesa-dri-drivers.i686 \
+  mesa-libGL.i686 \
+  mesa-libEGL.i686
+
+###############################################################################
+# Optional: hardware video acceleration helpers
+###############################################################################
+
+dnf5 install -y \
+  libva-utils \
+  intel-media-driver || true
+
+###############################################################################
+# Services
+###############################################################################
+
 systemctl enable libvirtd.service
 systemctl enable virtlogd.service
+systemctl enable podman.socket
+systemctl enable bluetooth.service
 
-# Flathub aktivieren
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
-# Appstream-Datenbank vorab generieren
-flatpak update --appstream -y && \
-# Flatpak-Datenbank initialisieren
-flatpak list || true
+###############################################################################
+# Cleanup
+###############################################################################
 
-echo "::endgroup::"
-
-shopt -u nullglob
+dnf5 clean all
 
 echo "Custom build complete!"
