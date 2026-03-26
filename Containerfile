@@ -38,7 +38,7 @@ FROM scratch AS ctx
 COPY build /build
 
 ## Alternative base images, no desktop included (uncomment to use):
-FROM ghcr.io/ublue-os/base-main:latest    
+FROM quay.io/fedora/fedora-kinoite:43
 # FROM quay.io/centos-bootc/centos-bootc:stream10
 
 ## Alternative GNOME OS base image (uncomment to use):
@@ -61,15 +61,6 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build/10-build.sh
-
-COPY files/. /
-
-RUN chmod +x /etc/skel/.config/firstboot/firstboot-setup.sh && \
-    chmod +x /usr/local/bin/install-homebrew.sh && \
-    systemctl --global enable firstboot-setup.path
-   
-
-  
 
 ### LINTING
 ## Verify final image and contents are correct.
