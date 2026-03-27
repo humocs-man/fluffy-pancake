@@ -74,6 +74,14 @@ dnf5 install -y \
   intel-media-driver || true
 
 ###############################################################################
+# Install Plasma Setup
+###############################################################################
+
+dnf5 install -y \
+plasma-setup
+
+
+###############################################################################
 # Services
 ###############################################################################
 
@@ -81,6 +89,7 @@ systemctl enable libvirtd.service
 systemctl enable virtlogd.service
 systemctl enable podman.socket
 systemctl enable bluetooth.service
+systemctl enable plasma-setup.service
 
 ###############################################################################
 # Cleanup
