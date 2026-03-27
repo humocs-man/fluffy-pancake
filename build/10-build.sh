@@ -90,6 +90,8 @@ systemctl enable virtlogd.service
 systemctl enable podman.socket
 systemctl enable bluetooth.service
 systemctl enable plasma-setup.service
+systemctl enable bootc-fetch-apply-updates.timer
+
 
 ###############################################################################
 # Cleanup
