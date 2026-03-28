@@ -21,7 +21,7 @@ jobs:
           # This should match the "# Name: your-repo-name" comment in your Containerfile
           # Example: If your Containerfile has "# Name: my-custom-os", use "my-custom-os" here
           packages: fluffy-pancake
-          older-than: 60 days
+          older-than: 10 days
           delete-orphaned-images: true
           keep-n-tagged: 7
           keep-n-untagged: 7
