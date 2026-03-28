@@ -11,7 +11,7 @@ This project is **not affiliated with, endorsed by, or supported by Fedora, Red 
 
 fluffy-pancake exists as a **private operating system build** for experimentation and personal workflows.
 
-The container image produced by this repository is **not publicly accessible** and **not intended for general consumption**.  
+The container image produced by this repository is **not intended for general consumption**.  
 Access to the image requires explicit authentication and permission from the repository owner.
 
 This repository does **not** provide a public distribution, installer, or upgrade path for third parties.
@@ -52,9 +52,4 @@ Images are stored in a **private GitHub Container Registry namespace**.
 
 ---
 
-## Image Usage (Private)
 
-The following command is shown **for technical reference only**.
-
-```bash
-sudo bootc switch ghcr.io/<your-username>/fluffy-pancake:stable
