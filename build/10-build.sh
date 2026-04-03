@@ -53,7 +53,8 @@ dnf5 install -y \
   qemu-kvm \
   qemu-img \
   virt-manager \
-  virt-viewer
+  virt-viewer \
+  distrobox
 
 ###############################################################################
 # Steam (RPM Fusion nonfree)
